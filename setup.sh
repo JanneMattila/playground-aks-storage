@@ -157,5 +157,26 @@ curl -X POST --data "$BODY" -H "Content-Type: text/plain" "https://$address/api/
 
 # https://docs.microsoft.com/en-us/azure/aks/csi-secrets-store-nginx-tls
 
+
+##############
+# fio examples
+##############
+mount
+sudo fdisk -l
+
+mkdir perf-test
+
+# Write test with 4 x 4MBs for 20 seconds
+fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+
+# Read test with 4 x 4MBs for 20 seconds
+fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+
+# Find test files
+ls perf-test/*.0
+
+# Remove test files
+rm perf-test/*.0
+
 # Wipe out the resources
 az group delete --name $resourceGroupName -y
