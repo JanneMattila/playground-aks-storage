@@ -30,3 +30,15 @@ spec:
         - containerPort: 80
           name: http
           protocol: TCP
+        volumeMounts:
+          - name: nfs
+            mountPath: /mnt/nfs
+          - name: smb
+            mountPath: /mnt/smb
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: nfs-pvc
+      - name: smb
+        persistentVolumeClaim:
+          claimName: smb-pvc

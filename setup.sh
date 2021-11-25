@@ -5,13 +5,16 @@ subscriptionName="AzureDev"
 aadAdminGroupContains="janne''s"
 
 aksName="myaksstorage"
+premiumStorageName="myaksstorage00010"
+premiumStorageShareNameSMB="myfilessmb"
+premiumStorageShareNameNFS="myfilesnfs"
 workspaceName="mystorageworkspace"
 vnetName="myaksstorage-vnet"
 subnetAks="AksSubnet"
 subnetStorage="StorageSubnet"
 identityName="myaksstorage"
 resourceGroupName="rg-myaksstorage"
-location="northeurope"
+location="westeurope"
 
 # Login and set correct context
 az login -o table
@@ -20,13 +23,13 @@ az account set --subscription $subscriptionName -o table
 subscriptionID=$(az account show -o tsv --query id)
 az group create -l $location -n $resourceGroupName -o table
 
-# Enable feature
-az feature register --name AKS-IngressApplicationGatewayAddon --namespace Microsoft.ContainerService
-az provider register -n Microsoft.ContainerService
-az feature list --namespace Microsoft.ContainerService -o table | grep Addon
-
 # Prepare extensions and providers
 az extension add --upgrade --yes --name aks-preview
+
+# Enable feature
+az feature register --namespace "Microsoft.ContainerService" --name "PodSubnetPreview"
+az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/PodSubnetPreview')].{Name:name,State:properties.state}"
+az provider register --namespace Microsoft.ContainerService
 
 # Remove extension in case conflicting previews
 az extension remove --name aks-preview
@@ -65,8 +68,8 @@ az aks get-versions -l $location -o table
 #  --private-dns-zone None
 
 az aks create -g $resourceGroupName -n $aksName \
- --zones "1" --max-pods 150 --network-plugin azure \
- --node-count 1 --enable-cluster-autoscaler --min-count 1 --max-count 3 \
+ --zones 1 2 3 --max-pods 50 --network-plugin azure \
+ --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
  --node-osdisk-type Ephemeral \
  --node-vm-size Standard_D8ds_v4 \
  --kubernetes-version 1.21.2 \
@@ -100,20 +103,86 @@ az aks get-credentials -n $aksName -g $resourceGroupName --overwrite-existing
 
 kubectl get nodes
 
-kubectl apply -f namespace.yaml
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
-kubectl apply -f ingress.yaml
+kubectl get nodes -o custom-columns=NAME:'{.metadata.name}',REGION:'{.metadata.labels.topology\.kubernetes\.io/region}',ZONE:'{metadata.labels.topology\.kubernetes\.io/zone}'
+# NAME                                REGION       ZONE
+# aks-nodepool1-30714164-vmss000000   westeurope   westeurope-1
+# aks-nodepool1-30714164-vmss000001   westeurope   westeurope-2
+# aks-nodepool1-30714164-vmss000002   westeurope   westeurope-3
+
+kubectl get storageclasses
+# NAME                    PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# azurefile               kubernetes.io/azure-file   Delete          Immediate              true                   25m
+# azurefile-csi           file.csi.azure.com         Delete          Immediate              true                   25m
+# azurefile-csi-premium   file.csi.azure.com         Delete          Immediate              true                   25m
+# azurefile-premium       kubernetes.io/azure-file   Delete          Immediate              true                   25m
+# default (default)       disk.csi.azure.com         Delete          WaitForFirstConsumer   true                   25m
+# managed                 kubernetes.io/azure-disk   Delete          WaitForFirstConsumer   true                   25m
+# managed-csi             disk.csi.azure.com         Delete          WaitForFirstConsumer   true                   25m
+# managed-csi-premium     disk.csi.azure.com         Delete          WaitForFirstConsumer   true                   25m
+# managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstConsumer   true                   25m
+
+kubectl describe storageclass azurefile-csi
+
+# Enable Azure File with NFS
+kubectl apply -f azurefile-csi-nfs/azurefile-csi-nfs.yaml
+
+# =>
+# NAME                    PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# ...
+# azurefile-csi-nfs       file.csi.azure.com         Delete          Immediate              true                   3s
+
+# Create Premium ZRS file share
+az storage account create \
+  --name $premiumStorageName \
+  --resource-group $resourceGroupName \
+  --location $location \
+  --sku Premium_ZRS \
+  --kind FileStorage \
+  --https-only
+
+premiumStorageKey=$(az storage account keys list \
+  --account-name $premiumStorageName \
+  --resource-group $resourceGroupName \
+  --query [0].value \
+  -o TSV)
+echo $premiumStorageKey
+
+az storage share-rm create --access-tier Premium --enabled-protocols SMB --quota 100 --name $premiumStorageShareNameSMB --storage-account $premiumStorageName
+az storage share-rm create --access-tier Premium --enabled-protocols NFS --quota 100 --name $premiumStorageShareNameNFS --storage-account $premiumStorageName
+
+# Provisioned capacity: 100 GiB
+# =>
+# Performance
+# Maximum IO/s     500
+# Burst IO/s       4000
+# Throughput rate  70.0 MiBytes / s
+
+kubectl apply -f demos/namespace.yaml
+
+kubectl create secret generic azurefile-secret --from-literal=azurestorageaccountname=$premiumStorageName --from-literal=azurestorageaccountkey=$premiumStorageKey -n demos --dry-run=client -o yaml > azurefile-secret.yaml
+cat azurefile-secret.yaml
+kubectl apply -f azurefile-secret.yaml
+
+kubectl apply -f azurefile-csi-nfs
+kubectl apply -f azurefile-csi-premium
+
+kubectl get pvc -n demos
+kubectl get pv -n demos
+
+kubectl describe pvc nfs-pvc -n demos
+kubectl describe pvc smb-pvc -n demos
+kubectl apply -f demos
+
+kubectl get deployment -n demos
 
 kubectl get service -n demos
-kubectl get ingress -n demos
 
-kubectl get ingress -n demos -o json
-ingressip=$(kubectl get ingress -n demos -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+kubectl get service -n demos -o json
+ingressip=$(kubectl get service -n demos -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 echo $ingressip
 
-curl $ingressip
-# -> <html><body>Hello there!</body></html>
+curl $ingressip/swagger/index.html
+# -> OK!
 
 BODY='IPLOOKUP bing.com'
 curl -X POST --data "$BODY" -H "Content-Type: text/plain" "http://$ingressip/api/commands"

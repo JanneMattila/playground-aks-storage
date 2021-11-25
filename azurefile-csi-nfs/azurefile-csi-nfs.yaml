@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile-csi-nfs
+provisioner: file.csi.azure.com
+parameters:
+  protocol: nfs
+allowVolumeExpansion: true
