@@ -184,55 +184,35 @@ echo $ingressip
 curl $ingressip/swagger/index.html
 # -> OK!
 
-BODY='IPLOOKUP bing.com'
-curl -X POST --data "$BODY" -H "Content-Type: text/plain" "http://$ingressip/api/commands"
-# IP: 13.107.21.200
-# IP: 204.79.197.200
-# IP: 2620:1ec:c11::200
+cat <<EOF > payload.json
+{
+  "path": "/mnt/nfs",
+  "filter": "*.*",
+  "recursive": true
+}
+EOF
 
-BODY='INFO ENV'
-curl -X POST --data "$BODY" -H "Content-Type: text/plain" "http://$ingressip/api/commands"
-# ...
-# ENV: WEBAPP_NETWORK_TESTER_DEMO_SERVICE_HOST: 10.0.221.201
-# ENV: WEBAPP_NETWORK_TESTER_DEMO_PORT: tcp://10.0.221.201:80
-# ENV: DOTNET_VERSION: 6.0.0
+curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
 
-##############
-# TLS examples
-##############
-# Create/get yourself a certificate
-# - You can use Let's Encrypt with instructions from here:
-#   https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/use_ssl_certificates.md
-#   ->
-domainName="jannemattila.com"
-sudo cp "/etc/letsencrypt/live/$domainName/privkey.pem" .
-sudo cp "/etc/letsencrypt/live/$domainName/fullchain.pem" .
-
-kubectl create secret tls tls-secret --key privkey.pem --cert fullchain.pem -n demos --dry-run=client -o yaml > tls-secret.yaml
-
-kubectl apply -f tls-secret.yaml
-
-kubectl apply -f ingress-tls.yaml
-kubectl get ingress -n demos
-kubectl describe ingress demos-ingress -n demos
-
-# Deploy DNS e.g., "agic.jannemattila.com" -> $ingressip
-address="agic.$domainName"
-echo $address
-
-# Try with HTTPS
-BODY='IPLOOKUP bing.com'
-curl -X POST --data "$BODY" -H "Content-Type: text/plain" "https://$address/api/commands"
-
-# https://docs.microsoft.com/en-us/azure/aks/csi-secrets-store-nginx-tls
-
+# Connect to first pod
+pod1=$(kubectl get pod -n demos -o name | head -n 1)
+echo $pod1
+kubectl exec --stdin --tty $pod1 -n demos -- /bin/sh
 
 ##############
 # fio examples
 ##############
 mount
-sudo fdisk -l
+fdisk -l
 
+# If not installed, then install
+apk add --no-cache fio
+
+fio
+
+cd /mnt/nfs
+cd /mnt/smb
 mkdir perf-test
 
 # Write test with 4 x 4MBs for 20 seconds
