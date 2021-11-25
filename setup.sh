@@ -6,8 +6,8 @@ aadAdminGroupContains="janne''s"
 
 aksName="myaksstorage"
 premiumStorageName="myaksstorage00010"
-premiumStorageShareNameSMB="myfilessmb"
-premiumStorageShareNameNFS="myfilesnfs"
+premiumStorageShareNameSMB="smb"
+premiumStorageShareNameNFS="nfs"
 workspaceName="mystorageworkspace"
 vnetName="myaksstorage-vnet"
 subnetAks="AksSubnet"
@@ -122,8 +122,9 @@ kubectl get storageclasses
 # managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstConsumer   true                   25m
 
 kubectl describe storageclass azurefile-csi
+kubectl describe storageclass azurefile-csi-premium
 
-# Enable Azure File with NFS
+# Enable Azure File with NFS to enable dynamic provisioning
 kubectl apply -f azurefile-csi-nfs/azurefile-csi-nfs.yaml
 
 # =>
@@ -157,27 +158,45 @@ az storage share-rm create --access-tier Premium --enabled-protocols NFS --quota
 # Burst IO/s       4000
 # Throughput rate  70.0 MiBytes / s
 
-kubectl apply -f demos/namespace.yaml
+kubectl apply -f namespace.yaml
 
-kubectl create secret generic azurefile-secret --from-literal=azurestorageaccountname=$premiumStorageName --from-literal=azurestorageaccountkey=$premiumStorageKey -n demos --dry-run=client -o yaml > azurefile-secret.yaml
+kubectl create secret generic azurefile-secret \
+  --from-literal=azurestorageaccountname=$premiumStorageName \
+  --from-literal=azurestorageaccountkey=$premiumStorageKey \
+  -n demos --type Opaque --dry-run=client -o yaml > azurefile-secret.yaml
 cat azurefile-secret.yaml
 kubectl apply -f azurefile-secret.yaml
 
-kubectl apply -f azurefile-csi-nfs
-kubectl apply -f azurefile-csi-premium
+# For static provisioning examples use these
+kubectl apply -f static/azurefile-csi-nfs
+kubectl apply -f static/azurefile-csi-premium
 
-kubectl get pvc -n demos
+# For dynamic provisioning examples use these
+kubectl apply -f dynamic/azurefile-csi-nfs
+kubectl apply -f dynamic/azurefile-csi-premium
+
 kubectl get pv -n demos
+kubectl get pvc -n demos
 
+kubectl describe pv nfs-pv -n demos
 kubectl describe pvc nfs-pvc -n demos
+
+kubectl describe pv smb-pv -n demos
 kubectl describe pvc smb-pvc -n demos
+
 kubectl apply -f demos
 
 kubectl get deployment -n demos
+kubectl describe deployment -n demos
+
+kubectl get pod -n demos
+pod1=$(kubectl get pod -n demos -o name | head -n 1)
+echo $pod1
+
+kubectl describe $pod1 -n demos
 
 kubectl get service -n demos
 
-kubectl get service -n demos -o json
 ingressip=$(kubectl get service -n demos -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 echo $ingressip
 
@@ -226,6 +245,8 @@ ls perf-test/*.0
 
 # Remove test files
 rm perf-test/*.0
+
+exit
 
 # Wipe out the resources
 az group delete --name $resourceGroupName -y
