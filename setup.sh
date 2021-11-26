@@ -112,10 +112,10 @@ kubectl get nodes -o custom-columns=NAME:'{.metadata.name}',REGION:'{.metadata.l
 kubectl apply -f namespace.yaml
 
 # Continue using "static provisioning" example
-# => setup-static.sh
+# => static/setup-static.sh
 
 # Continue using "dynamic provisioning" example
-# => setup-dynamic.sh
+# => dynamic/setup-dynamic.sh
 
 kubectl apply -f demos
 
