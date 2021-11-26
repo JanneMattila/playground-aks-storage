@@ -1,6 +1,105 @@
 # Notes
 
-## NFS
+## Azure NetApp Files NFSv4.1
+
+Using `Premium` with `1TB` ([Service Levels](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-service-levels)):
+
+| The Premium storage tier provides up to 64 MiB/s of throughput per 1 TiB of capacity provisioned.
+
+```bash
+/mnt/netapp-nfs # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+Jobs: 4 (f=4): [w(4)][19.0%][w=51.8MiB/s][w=13.3k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [w(4)][28.6%][w=50.8MiB/s][w=13.0k IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [w(4)][38.1%][w=50.8MiB/s][w=13.0k IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [w(4)][42.9%][w=51.5MiB/s][w=13.2k IOPS][eta 00m:12s]
+Jobs: 4 (f=4): [w(4)][47.6%][w=49.5MiB/s][w=12.7k IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [w(4)][55.0%][w=54.4MiB/s][w=13.9k IOPS][eta 00m:09s]
+Jobs: 4 (f=4): [w(4)][60.0%][w=49.1MiB/s][w=12.6k IOPS][eta 00m:08s]
+Jobs: 4 (f=4): [w(4)][70.0%][w=50.1MiB/s][w=12.8k IOPS][eta 00m:06s] 
+Jobs: 4 (f=4): [w(4)][80.0%][w=53.4MiB/s][w=13.7k IOPS][eta 00m:04s] 
+Jobs: 4 (f=4): [w(4)][90.0%][w=50.5MiB/s][w=12.9k IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [w(4)][100.0%][w=54.1MiB/s][w=13.8k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=45: Fri Nov 26 11:37:29 2021
+  write: IOPS=13.1k, BW=51.1MiB/s (53.6MB/s)(1027MiB/20098msec); 0 zone resets
+    slat (nsec): min=2000, max=99917k, avg=12658.57, stdev=702532.94
+    clat (usec): min=1543, max=199980, avg=78144.05, stdev=40461.94
+     lat (usec): min=1547, max=199989, avg=78156.92, stdev=40458.13
+    clat percentiles (msec):
+     |  1.00th=[    3],  5.00th=[    3], 10.00th=[    4], 20.00th=[    9],
+     | 30.00th=[   96], 40.00th=[   99], 50.00th=[  100], 60.00th=[  100],
+     | 70.00th=[  100], 80.00th=[  100], 90.00th=[  101], 95.00th=[  101],
+     | 99.00th=[  105], 99.50th=[  197], 99.90th=[  199], 99.95th=[  201],
+     | 99.99th=[  201]
+   bw (  KiB/s): min=39856, max=59440, per=100.00%, avg=52440.08, stdev=1015.61, samples=156
+   iops        : min= 9963, max=14860, avg=13109.90, stdev=253.97, samples=156
+  lat (msec)   : 2=0.26%, 4=10.58%, 10=10.76%, 20=0.95%, 100=71.57%
+  lat (msec)   : 250=5.88%
+  cpu          : usr=1.00%, sys=2.57%, ctx=29856, majf=0, minf=42
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=0,263009,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+  WRITE: bw=51.1MiB/s (53.6MB/s), 51.1MiB/s-51.1MiB/s (53.6MB/s-53.6MB/s), io=1027MiB (1077MB), run=20098-20098msec
+/mnt/netapp-nfs # 
+```
+
+```bash
+/mnt/netapp-nfs # fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+iops-test-job: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+Jobs: 4 (f=4): [r(4)][19.0%][r=50.0MiB/s][r=12.8k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [r(4)][28.6%][r=54.2MiB/s][r=13.9k IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [r(4)][33.3%][r=53.5MiB/s][r=13.7k IOPS][eta 00m:14s]
+Jobs: 4 (f=4): [r(4)][38.1%][r=48.8MiB/s][r=12.5k IOPS][eta 00m:13s]
+Jobs: 4 (f=4): [r(4)][45.0%][r=51.0MiB/s][r=13.1k IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [r(4)][55.0%][r=51.6MiB/s][r=13.2k IOPS][eta 00m:09s] 
+Jobs: 4 (f=4): [r(4)][60.0%][r=53.6MiB/s][r=13.7k IOPS][eta 00m:08s]
+Jobs: 4 (f=4): [r(4)][65.0%][r=52.2MiB/s][r=13.4k IOPS][eta 00m:07s]
+Jobs: 4 (f=4): [r(4)][75.0%][r=51.5MiB/s][r=13.2k IOPS][eta 00m:05s] 
+Jobs: 4 (f=4): [r(4)][85.0%][r=51.7MiB/s][r=13.2k IOPS][eta 00m:03s] 
+Jobs: 4 (f=4): [r(4)][95.0%][r=47.0MiB/s][r=12.0k IOPS][eta 00m:01s] 
+Jobs: 4 (f=4): [r(4)][100.0%][r=55.0MiB/s][r=14.1k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=56: Fri Nov 26 11:38:16 2021
+  read: IOPS=13.4k, BW=52.2MiB/s (54.7MB/s)(1044MiB/20013msec)
+    slat (nsec): min=1500, max=100129k, avg=12433.76, stdev=728511.45
+    clat (usec): min=1319, max=199459, avg=76643.29, stdev=41696.06
+     lat (usec): min=1324, max=199465, avg=76655.92, stdev=41692.46
+    clat percentiles (usec):
+     |  1.00th=[  1991],  5.00th=[  2376], 10.00th=[  3458], 20.00th=[  6587],
+     | 30.00th=[ 94897], 40.00th=[ 98042], 50.00th=[ 99091], 60.00th=[ 99091],
+     | 70.00th=[ 99091], 80.00th=[ 99091], 90.00th=[100140], 95.00th=[100140],
+     | 99.00th=[102237], 99.50th=[198181], 99.90th=[200279], 99.95th=[200279],
+     | 99.99th=[200279]
+   bw (  KiB/s): min=41524, max=59024, per=99.87%, avg=53347.13, stdev=926.09, samples=156
+   iops        : min=10379, max=14756, avg=13336.90, stdev=231.57, samples=156
+  lat (msec)   : 2=1.09%, 4=10.99%, 10=11.48%, 20=0.61%, 100=70.52%
+  lat (msec)   : 250=5.31%
+  cpu          : usr=1.02%, sys=2.62%, ctx=41463, majf=0, minf=1067
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=267267,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+   READ: bw=52.2MiB/s (54.7MB/s), 52.2MiB/s-52.2MiB/s (54.7MB/s-54.7MB/s), io=1044MiB (1095MB), run=20013-20013msec
+/mnt/netapp-nfs # 
+```
+
+## Azure Files Premium NFSv4.1
 
 ```bash
 /mnt/nfs # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
@@ -98,7 +197,7 @@ Run status group 0 (all jobs):
 /mnt/nfs # 
 ```
 
-## SMB
+## Azure Files Premium SMB
 
 ```bash
 /mnt/smb # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1

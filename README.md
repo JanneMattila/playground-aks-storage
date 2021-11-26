@@ -17,6 +17,8 @@ Playground for AKS and storage options
   - [Protocols](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-planning#available-protocols): [SMB](https://docs.microsoft.com/en-us/azure/storage/files/files-smb-protocol) or [NFS](https://docs.microsoft.com/en-us/azure/storage/files/files-nfs-protocol)
   - [NFS v4.1](https://docs.microsoft.com/en-us/azure/aks/azure-files-csi#nfs-file-shares)
   - [Scalability and performance targets](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-scale-targets)
+- Azure NetApp Files
+  - [Service levels for Azure NetApp Files](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-service-levels)
 - Zone redundant
 - Static vs. Dynamic [provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#provisioning)
   - What if you need to re-create the cluster?

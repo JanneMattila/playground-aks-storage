@@ -35,6 +35,8 @@ spec:
             mountPath: /mnt/nfs
           - name: smb
             mountPath: /mnt/smb
+          # - name: netapp-nfs
+          #   mountPath: /mnt/netapp-nfs
       volumes:
       - name: nfs
         persistentVolumeClaim:
@@ -42,3 +44,6 @@ spec:
       - name: smb
         persistentVolumeClaim:
           claimName: smb-pvc
+      # - name: netapp-nfs
+      #   persistentVolumeClaim:
+      #     claimName: netapp-nfs-pvc

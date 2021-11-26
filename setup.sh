@@ -12,6 +12,7 @@ workspaceName="mystorageworkspace"
 vnetName="myaksstorage-vnet"
 subnetAks="AksSubnet"
 subnetStorage="StorageSubnet"
+subnetNetApp="NetAppSubnet"
 identityName="myaksstorage"
 resourceGroupName="rg-myaksstorage"
 location="westeurope"
@@ -54,6 +55,14 @@ subnetstorageid=$(az network vnet subnet create -g $resourceGroupName --vnet-nam
   --name $subnetStorage --address-prefixes 10.3.0.0/24 \
   --query id -o tsv)
 echo $subnetstorageid
+
+# Delegate a subnet to Azure NetApp Files
+# https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-delegate-subnet
+subnetnetappid=$(az network vnet subnet create -g $resourceGroupName --vnet-name $vnetName \
+  --name $subnetNetApp --address-prefixes 10.4.0.0/28 \
+  --delegations "Microsoft.NetApp/volumes" \
+  --query id -o tsv)
+echo $subnetnetappid
 
 identityid=$(az identity create --name $identityName --resource-group $resourceGroupName --query id -o tsv)
 echo $identityid
@@ -145,22 +154,34 @@ cat <<EOF > payload.json
 EOF
 
 # Quick tests
-# - NFS
+# - Azure Files NFSv4.1
 curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
-# - SMB
+# - Azure Files SMB
 curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+# - Azure NetApp Files NFSv4.1
+curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
 
 # Test same in loop
-# - NFS
+# - Azure Files NFSv4.1
 for i in {0..50}
 do 
   curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
 done
-# - SMB
+# Examples: 1.8357, 2.918, 1.9534, 2.9706, 1.7649, 1.8872
+
+# - Azure Files SMB
 for i in {0..50}
 do 
   curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
 done
+# Examples: 15.7838, 10.2626, 14.653, 11.2682, 9.8133, 15.9403, 11.6134
+
+# - Azure NetApp Files NFSv4.1
+for i in {0..50}
+do 
+  curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+done
+# Examples: 0.4258, 0.3901,0.407, 0.5709, 0.3992, 0.3968
 
 # Connect to first pod
 pod1=$(kubectl get pod -n demos -o name | head -n 1)
@@ -180,6 +201,7 @@ fio
 
 cd /mnt/nfs
 cd /mnt/smb
+cd /mnt/netapp-nfs
 mkdir perf-test
 
 # Write test with 4 x 4MBs for 20 seconds
