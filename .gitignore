@@ -355,3 +355,4 @@ MigrationBackup/
 
 *-secret.yaml
 *.json
+*.bin

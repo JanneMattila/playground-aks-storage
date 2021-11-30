@@ -183,6 +183,13 @@ do
 done
 # Examples: 0.4258, 0.3901,0.407, 0.5709, 0.3992, 0.3968
 
+# Use upload and download APIs to test client to server latency and transfer performance
+truncate -s 10m demo1.bin
+ls -lhF *.bin
+time curl -X POST -H "Content-Type: multipart/form-data" -F "file=@demo1.bin" "http://$ingressip/api/upload"
+time curl --no-progress-meter -X POST --data '{"size": 10485760}' -H "Content-Type: application/json" "http://$ingressip/api/download" -o demo2.bin
+rm *.bin
+
 # Connect to first pod
 pod1=$(kubectl get pod -n demos -o name | head -n 1)
 echo $pod1
