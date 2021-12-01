@@ -89,6 +89,7 @@ az aks create -g $resourceGroupName -n $aksName \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
  --enable-managed-identity \
+ --disable-local-accounts \
  --aad-admin-group-object-ids $aadAdmingGroup \
  --workspace-resource-id $workspaceid \
  --load-balancer-sku standard \
@@ -184,9 +185,10 @@ done
 # Examples: 0.4258, 0.3901,0.407, 0.5709, 0.3992, 0.3968
 
 # Use upload and download APIs to test client to server latency and transfer performance
+# You can also use calculators e.g., https://www.calculator.net/bandwidth-calculator.html#download-time
 truncate -s 10m demo1.bin
 ls -lhF *.bin
-time curl -X POST -H "Content-Type: multipart/form-data" -F "file=@demo1.bin" "http://$ingressip/api/upload"
+time curl -T demo1.bin -X POST "http://$ingressip/api/upload"
 time curl --no-progress-meter -X POST --data '{"size": 10485760}' -H "Content-Type: application/json" "http://$ingressip/api/download" -o demo2.bin
 rm *.bin
 

@@ -16,7 +16,7 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - image: jannemattila/webapp-fs-tester:1.1.3
+      - image: jannemattila/webapp-fs-tester:1.1.7
         imagePullPolicy: Always
         name: webapp-fs-tester-demo
         resources:
