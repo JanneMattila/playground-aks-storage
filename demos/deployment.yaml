@@ -31,6 +31,8 @@ spec:
           name: http
           protocol: TCP
         volumeMounts:
+          - name: empty
+            mountPath: /mnt/empty
           - name: nfs
             mountPath: /mnt/nfs
           - name: smb
@@ -38,6 +40,8 @@ spec:
           # - name: netapp-nfs
           #   mountPath: /mnt/netapp-nfs
       volumes:
+      - name: empty
+        emptyDir: {}
       - name: nfs
         persistentVolumeClaim:
           claimName: nfs-pvc

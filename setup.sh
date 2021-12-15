@@ -202,15 +202,21 @@ kubectl exec --stdin --tty $pod1 -n demos -- /bin/sh
 ##############
 mount
 fdisk -l
+df -h
+cat /proc/partitions
 
 # If not installed, then install
 apk add --no-cache fio
 
 fio
 
+cd /mnt
+ls
+cd /mnt/empty
 cd /mnt/nfs
 cd /mnt/smb
 cd /mnt/netapp-nfs
+cd /home
 mkdir perf-test
 
 # Write test with 4 x 4MBs for 20 seconds

@@ -294,3 +294,201 @@ Run status group 0 (all jobs):
    READ: bw=16.9MiB/s (17.7MB/s), 16.9MiB/s-16.9MiB/s (17.7MB/s-17.7MB/s), io=338MiB (354MB), run=20010-20010msec
 /mnt/smb # 
 ```
+
+## emptyDir
+
+```bash
+/mnt/empty # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+Jobs: 4 (f=4): [w(4)][19.0%][w=70.0MiB/s][w=17.9k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [w(4)][23.8%][w=63.0MiB/s][w=16.1k IOPS][eta 00m:16s]
+Jobs: 4 (f=4): [w(4)][33.3%][w=69.7MiB/s][w=17.8k IOPS][eta 00m:14s] 
+Jobs: 4 (f=4): [w(4)][38.1%][w=69.8MiB/s][w=17.9k IOPS][eta 00m:13s]
+Jobs: 4 (f=4): [w(4)][45.0%][w=68.0MiB/s][w=17.4k IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [w(4)][50.0%][w=73.6MiB/s][w=18.9k IOPS][eta 00m:10s]
+Jobs: 4 (f=4): [w(4)][55.0%][w=73.3MiB/s][w=18.8k IOPS][eta 00m:09s]
+Jobs: 4 (f=4): [w(4)][60.0%][w=76.5MiB/s][w=19.6k IOPS][eta 00m:08s]
+Jobs: 4 (f=4): [w(4)][70.0%][w=70.3MiB/s][w=18.0k IOPS][eta 00m:06s] 
+Jobs: 4 (f=4): [w(4)][80.0%][w=76.0MiB/s][w=19.5k IOPS][eta 00m:04s] 
+Jobs: 4 (f=4): [w(4)][90.0%][w=73.0MiB/s][w=18.7k IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [w(4)][95.0%][w=66.3MiB/s][w=17.0k IOPS][eta 00m:01s]
+Jobs: 4 (f=4): [w(4)][100.0%][w=69.7MiB/s][w=17.8k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=37: Wed Dec 15 12:45:20 2021
+  write: IOPS=17.7k, BW=69.1MiB/s (72.5MB/s)(1384MiB/20010msec); 0 zone resets
+    slat (nsec): min=2000, max=104470k, avg=70961.26, stdev=2445347.87
+    clat (usec): min=133, max=289622, avg=57756.08, stdev=50613.94
+     lat (usec): min=153, max=289626, avg=57827.42, stdev=50628.43
+    clat percentiles (usec):
+     |  1.00th=[  1631],  5.00th=[  2245], 10.00th=[  3032], 20.00th=[  5276],
+     | 30.00th=[  7701], 40.00th=[ 10028], 50.00th=[ 85459], 60.00th=[ 91751],
+     | 70.00th=[ 96994], 80.00th=[ 99091], 90.00th=[100140], 95.00th=[102237],
+     | 99.00th=[198181], 99.50th=[198181], 99.90th=[200279], 99.95th=[200279],
+     | 99.99th=[200279]
+   bw (  KiB/s): min=44845, max=107710, per=100.00%, avg=70856.95, stdev=3676.59, samples=156
+   iops        : min=11211, max=26927, avg=17713.95, stdev=919.17, samples=156
+  lat (usec)   : 250=0.01%, 500=0.01%, 750=0.02%, 1000=0.01%
+  lat (msec)   : 2=3.77%, 4=11.09%, 10=24.96%, 20=5.76%, 50=0.01%
+  lat (msec)   : 100=41.00%, 250=13.39%, 500=0.01%
+  cpu          : usr=0.88%, sys=2.78%, ctx=96511, majf=0, minf=48
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=0,354225,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+  WRITE: bw=69.1MiB/s (72.5MB/s), 69.1MiB/s-69.1MiB/s (72.5MB/s-72.5MB/s), io=1384MiB (1451MB), run=20010-20010msec
+
+Disk stats (read/write):
+  sda: ios=1/343750, merge=0/8621, ticks=21/2471511, in_queue=1783932, util=24.95%
+```
+
+```bash
+/mnt/empty # fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+iops-test-job: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+Jobs: 4 (f=4): [r(4)][19.0%][r=71.5MiB/s][r=18.3k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [r(4)][28.6%][r=71.8MiB/s][r=18.4k IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [r(4)][38.1%][r=78.4MiB/s][r=20.1k IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [r(4)][45.0%][r=75.9MiB/s][r=19.4k IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [r(4)][50.0%][r=76.1MiB/s][r=19.5k IOPS][eta 00m:10s]
+Jobs: 4 (f=4): [r(4)][55.0%][r=80.2MiB/s][r=20.5k IOPS][eta 00m:09s]
+Jobs: 4 (f=4): [r(4)][65.0%][r=77.3MiB/s][r=19.8k IOPS][eta 00m:07s] 
+Jobs: 4 (f=4): [r(4)][70.0%][r=83.8MiB/s][r=21.5k IOPS][eta 00m:06s]
+Jobs: 4 (f=4): [r(4)][80.0%][r=74.9MiB/s][r=19.2k IOPS][eta 00m:04s] 
+Jobs: 4 (f=4): [r(4)][90.0%][r=76.5MiB/s][r=19.6k IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [r(4)][95.0%][r=71.9MiB/s][r=18.4k IOPS][eta 00m:01s]
+Jobs: 4 (f=4): [r(4)][100.0%][r=83.8MiB/s][r=21.4k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=51: Wed Dec 15 12:46:54 2021
+  read: IOPS=19.5k, BW=76.1MiB/s (79.8MB/s)(1530MiB/20088msec)
+    slat (nsec): min=1600, max=197911k, avg=58061.61, stdev=2191659.03
+    clat (usec): min=223, max=297988, avg=52408.92, stdev=47571.54
+     lat (usec): min=235, max=297994, avg=52467.13, stdev=47582.11
+    clat percentiles (usec):
+     |  1.00th=[  1418],  5.00th=[  2212], 10.00th=[  3032], 20.00th=[  5473],
+     | 30.00th=[  7701], 40.00th=[  9503], 50.00th=[ 77071], 60.00th=[ 88605],
+     | 70.00th=[ 92799], 80.00th=[ 98042], 90.00th=[100140], 95.00th=[100140],
+     | 99.00th=[191890], 99.50th=[198181], 99.90th=[200279], 99.95th=[202376],
+     | 99.99th=[295699]
+   bw (  KiB/s): min=43686, max=119056, per=100.00%, avg=78244.03, stdev=4185.49, samples=156
+   iops        : min=10921, max=29764, avg=19560.69, stdev=1046.38, samples=156
+  lat (usec)   : 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.03%
+  lat (msec)   : 2=3.87%, 4=10.53%, 10=27.36%, 20=7.60%, 50=0.04%
+  lat (msec)   : 100=41.88%, 250=8.65%, 500=0.03%
+  cpu          : usr=0.93%, sys=2.69%, ctx=117738, majf=0, minf=1083
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=391577,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+   READ: bw=76.1MiB/s (79.8MB/s), 76.1MiB/s-76.1MiB/s (79.8MB/s-79.8MB/s), io=1530MiB (1604MB), run=20088-20088msec
+
+Disk stats (read/write):
+  sda: ios=378035/211, merge=10834/4, ticks=2885813/54, in_queue=2128728, util=26.73%
+```
+
+## Other paths
+
+Testing underneath e.g., `/home` folder:
+
+```bash
+/home # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+Jobs: 4 (f=4): [w(4)][14.3%][w=18.3MiB/s][w=4675 IOPS][eta 00m:18s]
+Jobs: 4 (f=4): [w(4)][23.8%][w=22.6MiB/s][w=5773 IOPS][eta 00m:16s] 
+Jobs: 4 (f=4): [w(4)][33.3%][w=22.9MiB/s][w=5863 IOPS][eta 00m:14s] 
+Jobs: 4 (f=4): [w(4)][42.9%][w=19.7MiB/s][w=5032 IOPS][eta 00m:12s] 
+Jobs: 4 (f=4): [w(4)][47.6%][w=18.9MiB/s][w=4846 IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [w(4)][60.0%][w=20.5MiB/s][w=5260 IOPS][eta 00m:08s] 
+Jobs: 4 (f=4): [w(4)][65.0%][w=20.8MiB/s][w=5330 IOPS][eta 00m:07s]
+Jobs: 4 (f=4): [w(4)][75.0%][w=23.4MiB/s][w=5998 IOPS][eta 00m:05s] 
+Jobs: 4 (f=4): [w(4)][80.0%][w=20.7MiB/s][w=5300 IOPS][eta 00m:04s]
+Jobs: 4 (f=4): [w(4)][90.0%][w=22.6MiB/s][w=5773 IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [w(4)][95.0%][w=22.0MiB/s][w=5622 IOPS][eta 00m:01s]
+Jobs: 4 (f=0): [f(4)][100.0%][w=26.1MiB/s][w=6680 IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=86: Wed Dec 15 12:54:09 2021
+  write: IOPS=5236, BW=20.5MiB/s (21.5MB/s)(409MiB/20001msec); 0 zone resets
+    slat (usec): min=39, max=99944, avg=760.50, stdev=6827.23
+    clat (usec): min=12, max=481505, avg=194032.29, stdev=50504.97
+     lat (usec): min=118, max=481772, avg=194793.10, stdev=50533.92
+    clat percentiles (msec):
+     |  1.00th=[  107],  5.00th=[  111], 10.00th=[  114], 20.00th=[  186],
+     | 30.00th=[  192], 40.00th=[  194], 50.00th=[  199], 60.00th=[  201],
+     | 70.00th=[  203], 80.00th=[  207], 90.00th=[  284], 95.00th=[  292],
+     | 99.00th=[  305], 99.50th=[  384], 99.90th=[  401], 99.95th=[  405],
+     | 99.99th=[  481]
+   bw (  KiB/s): min=11432, max=26898, per=99.37%, avg=20815.97, stdev=864.50, samples=156
+   iops        : min= 2858, max= 6724, avg=5203.72, stdev=216.13, samples=156
+  lat (usec)   : 20=0.01%, 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.01%
+  lat (msec)   : 2=0.01%, 100=0.49%, 250=87.64%, 500=11.85%
+  cpu          : usr=0.90%, sys=2.77%, ctx=104753, majf=0, minf=51
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.8%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=0,104742,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+  WRITE: bw=20.5MiB/s (21.5MB/s), 20.5MiB/s-20.5MiB/s (21.5MB/s-21.5MB/s), io=409MiB (429MB), run=20001-20001msec
+```
+
+```bash
+/home # fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+iops-test-job: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+Jobs: 4 (f=4): [r(4)][15.0%][r=27.2MiB/s][r=6953 IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [r(4)][25.0%][r=26.7MiB/s][r=6825 IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [r(4)][35.0%][r=23.3MiB/s][r=5961 IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [r(4)][45.0%][r=31.8MiB/s][r=8144 IOPS][eta 00m:11s] 
+Jobs: 4 (f=4): [r(4)][55.0%][r=29.7MiB/s][r=7612 IOPS][eta 00m:09s] 
+Jobs: 4 (f=4): [r(4)][61.9%][r=23.4MiB/s][r=6000 IOPS][eta 00m:08s] 
+Jobs: 4 (f=4): [r(4)][75.0%][r=21.8MiB/s][r=5577 IOPS][eta 00m:05s] 
+Jobs: 4 (f=4): [r(4)][80.0%][r=22.5MiB/s][r=5769 IOPS][eta 00m:04s]
+Jobs: 4 (f=4): [r(4)][90.0%][r=19.5MiB/s][r=4988 IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [r(4)][100.0%][r=24.0MiB/s][r=6132 IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=94: Wed Dec 15 12:55:36 2021
+  read: IOPS=6414, BW=25.1MiB/s (26.3MB/s)(501MiB/20002msec)
+    slat (usec): min=83, max=91175, avg=621.02, stdev=5501.29
+    clat (usec): min=10, max=373006, avg=158663.11, stdev=42290.33
+     lat (usec): min=174, max=373407, avg=159284.42, stdev=42325.34
+    clat percentiles (msec):
+     |  1.00th=[  104],  5.00th=[  109], 10.00th=[  110], 20.00th=[  113],
+     | 30.00th=[  116], 40.00th=[  124], 50.00th=[  180], 60.00th=[  186],
+     | 70.00th=[  190], 80.00th=[  194], 90.00th=[  199], 95.00th=[  203],
+     | 99.00th=[  284], 99.50th=[  288], 99.90th=[  296], 99.95th=[  300],
+     | 99.99th=[  305]
+   bw (  KiB/s): min=17792, max=32560, per=99.47%, avg=25522.13, stdev=895.84, samples=156
+   iops        : min= 4448, max= 8140, avg=6380.26, stdev=223.95, samples=156
+  lat (usec)   : 20=0.01%, 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.01%
+  lat (msec)   : 2=0.02%, 4=0.03%, 10=0.07%, 20=0.07%, 100=0.32%
+  lat (msec)   : 250=97.59%, 500=1.89%
+  cpu          : usr=0.89%, sys=2.79%, ctx=128326, majf=0, minf=1076
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.8%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=128305,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+   READ: bw=25.1MiB/s (26.3MB/s), 25.1MiB/s-25.1MiB/s (26.3MB/s-26.3MB/s), io=501MiB (526MB), run=20002-20002msec
+```
