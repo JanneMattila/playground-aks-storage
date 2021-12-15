@@ -33,6 +33,8 @@ spec:
         volumeMounts:
           - name: empty
             mountPath: /mnt/empty
+          - name: hostpath
+            mountPath: /mnt/hostpath
           - name: nfs
             mountPath: /mnt/nfs
           - name: smb
@@ -42,6 +44,9 @@ spec:
       volumes:
       - name: empty
         emptyDir: {}
+      - name: hostpath
+        hostPath:
+          path: /mnt
       - name: nfs
         persistentVolumeClaim:
           claimName: nfs-pvc

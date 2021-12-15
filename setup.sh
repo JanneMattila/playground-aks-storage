@@ -213,6 +213,7 @@ fio
 cd /mnt
 ls
 cd /mnt/empty
+cd /mnt/hostpath
 cd /mnt/nfs
 cd /mnt/smb
 cd /mnt/netapp-nfs
