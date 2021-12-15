@@ -400,7 +400,7 @@ Disk stats (read/write):
 
 ## hostPath /mnt
 
-Note: `/dev/sda` is OS disk and `/dev/sdb` is temp disk mounted at `/mnt`:
+`/dev/sda` is OS disk and `/dev/sdb` is temp disk mounted at `/mnt` at host:
 
 ```bash
 /mnt/hostpath $ df -h
@@ -412,7 +412,7 @@ tmpfs                    15.7G         0     15.7G   0% /sys/fs/cgroup
 /dev/sdb1               294.3G     80.1M    279.2G   0% /mnt/hostpath
 ```
 
-Using [Standard_D8ds_v4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series) as VM size and it has of `300 GB` temp storage.
+Using [Standard_D8ds_v4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series) as VM size and it has `300 GB` temp storage.
 
 ```yaml
 volumes:
