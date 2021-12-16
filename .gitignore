@@ -356,3 +356,4 @@ MigrationBackup/
 *-secret.yaml
 *.json
 *.bin
+perf-test/

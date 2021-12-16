@@ -297,6 +297,8 @@ Run status group 0 (all jobs):
 
 ## emptyDir
 
+[emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)
+
 ```bash
 /mnt/empty # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
 iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
@@ -398,9 +400,11 @@ Disk stats (read/write):
   sda: ios=378035/211, merge=10834/4, ticks=2885813/54, in_queue=2128728, util=26.73%
 ```
 
-## hostPath /mnt
+## hostPath
 
-`/dev/sda` is OS disk and `/dev/sdb` is temp disk mounted at `/mnt` at host:
+[hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
+
+`/dev/sda1` is OS disk and `/dev/sdb1` is temp disk mounted at `/mnt` at host:
 
 ```bash
 /mnt/hostpath $ df -h
@@ -413,6 +417,8 @@ tmpfs                    15.7G         0     15.7G   0% /sys/fs/cgroup
 ```
 
 Using [Standard_D8ds_v4](https://docs.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series#ddsv4-series) as VM size and it has `300 GB` temp storage.
+
+Below are numbers for above "temp disk":
 
 ```yaml
 volumes:
