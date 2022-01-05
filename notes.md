@@ -1,5 +1,9 @@
 # Notes
 
+Perf testing is always tricky. Here are some
+numbers with *very* **very** limited testing.
+Your mileage *will* vary.
+
 ## Azure NetApp Files NFSv4.1
 
 Using `Premium` with `1TB` ([Service Levels](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-service-levels)):

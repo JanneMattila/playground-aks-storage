@@ -1,6 +1,22 @@
 # Playground AKS Storage
 
-Playground for AKS and storage options
+Playground for AKS and storage options.
+This repository contains examples how to use `static` or `dynamic`
+using different combinations of Azure storage services.
+This includes `Azure File` and `Azure NetApp Files`
+and using different protocols like `NFS v4.1` or `SMB`.
+You can then performance test your storage setup, to see
+if you get the throughput you need.
+Example performance testing numbers has been put to [notes](notes.md).
+
+## Usage
+
+1. Clone this repository to your own machine
+2. Open Workspace
+  - Use WSL in Windows
+  - Requires Bash
+3. Open [setup.sh](setup.sh) to walk through steps to deploy this demo environment
+  - Execute different script steps one-by-one (hint: use [shift-enter](https://github.com/JanneMattila/some-questions-and-some-answers/blob/master/q%26a/vs_code.md#automation-tip-shift-enter))
 
 ## Discussion topics
 
