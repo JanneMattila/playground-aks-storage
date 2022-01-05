@@ -4,7 +4,7 @@ Playground for AKS and storage options.
 This repository contains examples how to use `static` or `dynamic` provisioning
 using different combinations of Azure storage services.
 This includes `Azure Files` and `Azure NetApp Files`
-with different protocols like `NFS v4.1` or `SMB`.
+with different protocols like `NFSv4.1` or `SMB`.
 You can then performance test your storage setup, to see
 if you get the throughput you need.
 Example performance testing numbers has been put to [notes](notes.md).
