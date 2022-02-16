@@ -301,7 +301,7 @@ Run status group 0 (all jobs):
 
 ## Azure Disk - Premium P4
 
-Example from `P4 - 120 IOPS, 25 MBps`.
+Example from `P4 - 120 IOPS, 25 MBps`. Note: `Max burst IOPS` as seen in below numbers.
 
 See [Premium storage disk sizes](https://docs.microsoft.com/en-us/azure/virtual-machines/premium-storage-performance#premium-storage-disk-sizes).
 
