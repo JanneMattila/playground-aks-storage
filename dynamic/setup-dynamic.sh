@@ -38,3 +38,18 @@ kubectl get pvc -n demos
 
 kubectl describe pvc nfs-pvc -n demos
 kubectl describe pvc smb-pvc -n demos
+
+#######################
+# Azure
+#  ____  _     _
+# |  _ \(_)___| | __
+# | | | | / __| |/ /
+# | |_| | \__ \   <
+# |____/|_|___/_|\_\
+# examples
+#######################
+
+# Enable Premium Azure Disk with dynamic provisioning
+kubectl apply -f dynamic/azuredisk
+
+kubectl describe pvc premiumdisk-pvc -n demos

@@ -111,7 +111,7 @@ sudo az aks install-cli
 az aks get-credentials -n $aksName -g $resourceGroupName --overwrite-existing
 
 kubectl get nodes
-
+kubectl get nodes -o wide
 kubectl get nodes -o custom-columns=NAME:'{.metadata.name}',REGION:'{.metadata.labels.topology\.kubernetes\.io/region}',ZONE:'{metadata.labels.topology\.kubernetes\.io/zone}'
 # NAME                                REGION       ZONE
 # aks-nodepool1-30714164-vmss000000   westeurope   westeurope-1
@@ -131,6 +131,9 @@ kubectl apply -f demos
 
 kubectl get deployment -n demos
 kubectl describe deployment -n demos
+
+kubectl get pod -n demos
+kubectl get pod -n demos -o custom-columns=NAME:'{.metadata.name}',NODE:'{.spec.nodeName}'
 
 kubectl get pod -n demos
 pod1=$(kubectl get pod -n demos -o name | head -n 1)
@@ -234,6 +237,32 @@ rm perf-test/*.0
 
 # Exit container shell
 exit
+
+################################
+# To test
+#  _____
+# | ____|_ __ _ __ ___  _ __
+# |  _| | '__| '__/ _ \| '__|
+# | |___| |  | | | (_) | |
+# |_____|_|  |_|  \___/|_|   s
+# scenarios
+################################
+
+# Delete pod
+# ----------
+kubectl delete $pod1 -n demos
+
+# Delete VM in VMSS
+# -----------------
+# Note: If you use Azure Disk from Zone-1, then
+# killing node from matching zone will bring app down until
+# AKS introduces new node to that zone.
+nodeResourceGroup=$(az aks show -g $resourceGroupName -n $aksName --query nodeResourceGroup -o tsv)
+vmss=$(az vmss list -g $nodeResourceGroup --query [0].name -o tsv)
+az vmss list-instances -n $vmss -g $nodeResourceGroup -o table
+vmssvm1=$(az vmss list-instances -n $vmss -g $nodeResourceGroup --query [0].instanceId -o tsv)
+echo $vmssvm1
+az vmss delete-instances --instance-ids $vmssvm1 -n $vmss -g $nodeResourceGroup
 
 # Wipe out the resources
 az group delete --name $resourceGroupName -y

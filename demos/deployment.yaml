@@ -39,6 +39,8 @@ spec:
             mountPath: /mnt/nfs
           - name: smb
             mountPath: /mnt/smb
+          # - name: premiumdisk
+          #   mountPath: /mnt/premiumdisk
           # - name: netapp-nfs
           #   mountPath: /mnt/netapp-nfs
       volumes:
@@ -53,6 +55,9 @@ spec:
       - name: smb
         persistentVolumeClaim:
           claimName: smb-pvc
+      # - name: premiumdisk
+      #   persistentVolumeClaim:
+      #     claimName: premiumdisk-pvc
       # - name: netapp-nfs
       #   persistentVolumeClaim:
       #     claimName: netapp-nfs-pvc
