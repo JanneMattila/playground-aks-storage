@@ -219,6 +219,7 @@ cd /mnt/empty
 cd /mnt/hostpath
 cd /mnt/nfs
 cd /mnt/smb
+cd /mnt/premiumdisk
 cd /mnt/netapp-nfs
 cd /home
 mkdir perf-test

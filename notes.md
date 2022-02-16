@@ -299,6 +299,110 @@ Run status group 0 (all jobs):
 /mnt/smb # 
 ```
 
+## Azure Disk - Premium P4
+
+Example from `P4 - 120 IOPS, 25 MBps`.
+
+See [Premium storage disk sizes](https://docs.microsoft.com/en-us/azure/virtual-machines/premium-storage-performance#premium-storage-disk-sizes).
+
+```bash
+/mnt/premiumdisk # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+Jobs: 4 (f=4): [w(4)][15.0%][w=11.3MiB/s][w=2881 IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [w(4)][25.0%][w=14.1MiB/s][w=3618 IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [w(4)][35.0%][w=14.1MiB/s][w=3609 IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [w(4)][45.0%][w=14.2MiB/s][w=3623 IOPS][eta 00m:11s] 
+Jobs: 4 (f=4): [w(4)][55.0%][w=14.1MiB/s][w=3603 IOPS][eta 00m:09s] 
+Jobs: 4 (f=4): [w(4)][65.0%][w=14.1MiB/s][w=3599 IOPS][eta 00m:07s] 
+Jobs: 4 (f=4): [w(4)][75.0%][w=14.2MiB/s][w=3639 IOPS][eta 00m:05s] 
+Jobs: 4 (f=4): [w(4)][85.0%][w=14.0MiB/s][w=3589 IOPS][eta 00m:03s] 
+Jobs: 4 (f=4): [w(4)][95.0%][w=14.0MiB/s][w=3588 IOPS][eta 00m:01s] 
+Jobs: 4 (f=4): [w(4)][100.0%][w=14.1MiB/s][w=3618 IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=64: Wed Feb 16 12:45:48 2022
+  write: IOPS=3254, BW=12.7MiB/s (13.3MB/s)(257MiB/20253msec); 0 zone resets
+    slat (usec): min=2, max=82067, avg=11.80, stdev=319.74
+    clat (msec): min=2, max=2711, avg=314.58, stdev=263.08
+     lat (msec): min=2, max=2711, avg=314.59, stdev=263.09
+    clat percentiles (msec):
+     |  1.00th=[  100],  5.00th=[  106], 10.00th=[  146], 20.00th=[  201],
+     | 30.00th=[  205], 40.00th=[  241], 50.00th=[  251], 60.00th=[  284],
+     | 70.00th=[  309], 80.00th=[  397], 90.00th=[  506], 95.00th=[  600],
+     | 99.00th=[ 2106], 99.50th=[ 2198], 99.90th=[ 2467], 99.95th=[ 2668],
+     | 99.99th=[ 2702]
+   bw (  KiB/s): min=  544, max=17840, per=100.00%, avg=13504.84, stdev=903.18, samples=154
+   iops        : min=  136, max= 4460, avg=3376.26, stdev=225.79, samples=154
+  lat (msec)   : 4=0.01%, 10=0.01%, 50=0.08%, 100=1.15%, 250=48.40%
+  lat (msec)   : 500=39.43%, 750=8.93%, 1000=0.40%, 2000=0.38%, >=2000=1.23%
+  cpu          : usr=0.38%, sys=1.22%, ctx=76728, majf=0, minf=53
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.2%, >=64=99.6%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=0,65907,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+  WRITE: bw=12.7MiB/s (13.3MB/s), 12.7MiB/s-12.7MiB/s (13.3MB/s-13.3MB/s), io=257MiB (270MB), run=20253-20253msec
+
+Disk stats (read/write):
+  sdc: ios=0/63438, merge=0/2023, ticks=0/19790632, in_queue=19663492, util=99.36%
+```
+
+```bash
+/mnt/premiumdisk # fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readon
+ly
+iops-test-job: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+Jobs: 4 (f=4): [r(4)][14.3%][r=93.1MiB/s][r=23.8k IOPS][eta 00m:18s]
+Jobs: 4 (f=4): [r(4)][23.8%][r=98.5MiB/s][r=25.2k IOPS][eta 00m:16s] 
+Jobs: 4 (f=4): [r(4)][33.3%][r=92.2MiB/s][r=23.6k IOPS][eta 00m:14s] 
+Jobs: 4 (f=4): [r(4)][45.0%][r=97.1MiB/s][r=24.9k IOPS][eta 00m:11s] 
+Jobs: 4 (f=4): [r(4)][55.0%][r=89.4MiB/s][r=22.9k IOPS][eta 00m:09s] 
+Jobs: 4 (f=4): [r(4)][60.0%][r=82.0MiB/s][r=21.0k IOPS][eta 00m:08s]
+Jobs: 4 (f=4): [r(4)][65.0%][r=90.4MiB/s][r=23.1k IOPS][eta 00m:07s]
+Jobs: 4 (f=4): [r(4)][70.0%][r=83.7MiB/s][r=21.4k IOPS][eta 00m:06s]
+Jobs: 4 (f=4): [r(4)][75.0%][r=97.1MiB/s][r=24.9k IOPS][eta 00m:05s]
+Jobs: 4 (f=4): [r(4)][85.0%][r=82.7MiB/s][r=21.2k IOPS][eta 00m:03s] 
+Jobs: 4 (f=4): [r(4)][90.0%][r=91.4MiB/s][r=23.4k IOPS][eta 00m:02s]
+Jobs: 4 (f=4): [r(4)][100.0%][r=93.5MiB/s][r=23.9k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=72: Wed Feb 16 12:46:45 2022
+  read: IOPS=23.1k, BW=90.3MiB/s (94.7MB/s)(1824MiB/20192msec)
+    slat (nsec): min=1600, max=199049k, avg=118672.70, stdev=3340826.41
+    clat (usec): min=102, max=400026, avg=44025.81, stdev=68387.88
+     lat (usec): min=204, max=400033, avg=44146.89, stdev=68519.06
+    clat percentiles (usec):
+     |  1.00th=[   988],  5.00th=[  1012], 10.00th=[  1057], 20.00th=[  1270],
+     | 30.00th=[  1369], 40.00th=[  1516], 50.00th=[  1713], 60.00th=[  2114],
+     | 70.00th=[ 92799], 80.00th=[ 96994], 90.00th=[101188], 95.00th=[200279],
+     | 99.00th=[295699], 99.50th=[299893], 99.90th=[392168], 99.95th=[396362],
+     | 99.99th=[400557]
+   bw (  KiB/s): min=17672, max=239048, per=100.00%, avg=93191.79, stdev=13442.20, samples=156
+   iops        : min= 4418, max=59760, avg=23297.62, stdev=3360.54, samples=156
+  lat (usec)   : 250=0.01%, 500=0.08%, 750=0.17%, 1000=2.15%
+  lat (msec)   : 2=55.79%, 4=8.48%, 10=0.14%, 100=17.47%, 250=14.48%
+  lat (msec)   : 500=1.25%
+  cpu          : usr=0.95%, sys=2.69%, ctx=5225, majf=0, minf=1081
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=466977,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+   READ: bw=90.3MiB/s (94.7MB/s), 90.3MiB/s-90.3MiB/s (94.7MB/s-94.7MB/s), io=1824MiB (1913MB), run=20192-20192msec
+
+Disk stats (read/write):
+  sdc: ios=466755/0, merge=221/0, ticks=307498/0, in_queue=20, util=14.50%
+```
+
 ## emptyDir
 
 [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)
