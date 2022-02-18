@@ -301,7 +301,7 @@ Run status group 0 (all jobs):
 
 ## Azure Disk - Ultra
 
-Example test using `disk size (GiB): 250`, `Disk IOPS: 76800` and `Disk throughput (MB/s): 4000`.
+Example test using `disk size (GiB): 250`, `Disk IOPS: 76800`, `Disk throughput (MB/s): 4000` and `CachingMode: None`.
 
 ```bash
 /mnt/ultradisk # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
