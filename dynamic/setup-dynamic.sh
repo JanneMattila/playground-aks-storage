@@ -49,7 +49,12 @@ kubectl describe pvc smb-pvc -n demos
 # examples
 #######################
 
-# Enable Premium Azure Disk with dynamic provisioning
+# Enable Premium Disk with dynamic provisioning
 kubectl apply -f dynamic/azuredisk
 
 kubectl describe pvc premiumdisk-pvc -n demos
+
+# Enable Ultra Disk with dynamic provisioning
+kubectl apply -f dynamic/ultradisk
+
+kubectl describe pvc ultradisk-pvc -n demos

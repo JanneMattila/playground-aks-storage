@@ -14,7 +14,7 @@ spec:
         app: webapp-fs-tester-demo
     spec:
       nodeSelector:
-        "beta.kubernetes.io/os": linux
+        kubernetes.io/os: linux
       containers:
       - image: jannemattila/webapp-fs-tester:1.1.7
         imagePullPolicy: Always
@@ -41,6 +41,8 @@ spec:
             mountPath: /mnt/smb
           # - name: premiumdisk
           #   mountPath: /mnt/premiumdisk
+          # - name: ultradisk
+          #   mountPath: /mnt/ultradisk
           # - name: netapp-nfs
           #   mountPath: /mnt/netapp-nfs
       volumes:
@@ -58,6 +60,9 @@ spec:
       # - name: premiumdisk
       #   persistentVolumeClaim:
       #     claimName: premiumdisk-pvc
+      # - name: ultradisk
+      #   persistentVolumeClaim:
+      #     claimName: ultradisk-pvc
       # - name: netapp-nfs
       #   persistentVolumeClaim:
       #     claimName: netapp-nfs-pvc

@@ -40,3 +40,4 @@ Example performance testing numbers has been put to [notes](notes.md).
   - What if you need to re-create the cluster?
 - [Compare access to Azure Files, Blob Storage, and Azure NetApp Files with NFS](https://docs.microsoft.com/en-us/azure/storage/common/nfs-comparison)
 - Azure Blob storage NFS v3.0
+- [Availability Zones](https://kubernetes-sigs.github.io/cloud-provider-azure/topics/availability-zones/)

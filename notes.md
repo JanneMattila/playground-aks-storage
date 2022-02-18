@@ -299,11 +299,116 @@ Run status group 0 (all jobs):
 /mnt/smb # 
 ```
 
+## Azure Disk - Ultra
+
+Example test using `disk size (GiB): 250`, `Disk IOPS: 76800` and `Disk throughput (MB/s): 4000`.
+
+```bash
+/mnt/ultradisk # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+iops-test-job: Laying out IO file (1 file / 4MiB)
+Jobs: 4 (f=4): [w(4)][19.0%][w=57.4MiB/s][w=14.7k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [w(4)][23.8%][w=56.9MiB/s][w=14.6k IOPS][eta 00m:16s]
+Jobs: 4 (f=4): [w(4)][35.0%][w=60.9MiB/s][w=15.6k IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [w(4)][45.0%][w=60.9MiB/s][w=15.6k IOPS][eta 00m:11s] 
+Jobs: 4 (f=4): [w(4)][50.0%][w=63.2MiB/s][w=16.2k IOPS][eta 00m:10s]
+Jobs: 4 (f=4): [w(4)][55.0%][w=59.9MiB/s][w=15.3k IOPS][eta 00m:09s]
+Jobs: 4 (f=4): [w(4)][65.0%][w=57.2MiB/s][w=14.6k IOPS][eta 00m:07s] 
+Jobs: 4 (f=4): [w(4)][70.0%][w=58.4MiB/s][w=15.0k IOPS][eta 00m:06s]
+Jobs: 4 (f=4): [w(4)][75.0%][w=62.4MiB/s][w=16.0k IOPS][eta 00m:05s]
+Jobs: 4 (f=4): [w(4)][80.0%][w=59.0MiB/s][w=15.1k IOPS][eta 00m:04s]
+Jobs: 4 (f=4): [w(4)][90.0%][w=60.0MiB/s][w=15.4k IOPS][eta 00m:02s] 
+Jobs: 4 (f=4): [w(4)][100.0%][w=60.0MiB/s][w=15.3k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=42: Fri Feb 18 10:45:51 2022
+  write: IOPS=15.3k, BW=59.7MiB/s (62.6MB/s)(1199MiB/20085msec); 0 zone resets
+    slat (nsec): min=1900, max=100178k, avg=67530.74, stdev=2337557.27
+    clat (usec): min=272, max=297207, avg=66833.83, stdev=49235.22
+     lat (usec): min=276, max=297219, avg=66902.18, stdev=49230.27
+    clat percentiles (usec):
+     |  1.00th=[  1598],  5.00th=[  2376], 10.00th=[  3195], 20.00th=[  5932],
+     | 30.00th=[  9110], 40.00th=[ 85459], 50.00th=[ 93848], 60.00th=[ 96994],
+     | 70.00th=[ 99091], 80.00th=[100140], 90.00th=[101188], 95.00th=[103285],
+     | 99.00th=[198181], 99.50th=[198181], 99.90th=[200279], 99.95th=[200279],
+     | 99.99th=[202376]
+   bw (  KiB/s): min=39972, max=89136, per=100.00%, avg=61376.64, stdev=2583.28, samples=156
+   iops        : min= 9992, max=22284, avg=15343.95, stdev=645.85, samples=156
+  lat (usec)   : 500=0.07%, 750=0.12%, 1000=0.10%
+  lat (msec)   : 2=2.72%, 4=10.83%, 10=18.12%, 20=4.30%, 50=0.04%
+  lat (msec)   : 100=45.13%, 250=18.58%, 500=0.01%
+  cpu          : usr=0.86%, sys=2.58%, ctx=93773, majf=0, minf=53
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=0,306913,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+  WRITE: bw=59.7MiB/s (62.6MB/s), 59.7MiB/s-59.7MiB/s (62.6MB/s-62.6MB/s), io=1199MiB (1257MB), run=20085-20085msec
+
+Disk stats (read/write):
+  sdc: ios=0/297129, merge=0/6854, ticks=0/2434030, in_queue=1842628, util=28.22%
+```
+
+```bash
+/mnt/ultradisk # fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+iops-test-job: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+...
+fio-3.27
+Starting 4 processes
+Jobs: 4 (f=4): [r(4)][14.3%][r=67.2MiB/s][r=17.2k IOPS][eta 00m:18s]
+Jobs: 4 (f=4): [r(4)][23.8%][r=66.0MiB/s][r=16.9k IOPS][eta 00m:16s] 
+Jobs: 4 (f=4): [r(4)][33.3%][r=67.7MiB/s][r=17.3k IOPS][eta 00m:14s] 
+Jobs: 4 (f=4): [r(4)][42.9%][r=66.6MiB/s][r=17.0k IOPS][eta 00m:12s] 
+Jobs: 4 (f=4): [r(4)][47.6%][r=61.0MiB/s][r=15.6k IOPS][eta 00m:11s]
+Jobs: 4 (f=4): [r(4)][57.1%][r=67.1MiB/s][r=17.2k IOPS][eta 00m:09s] 
+Jobs: 4 (f=4): [r(4)][65.0%][r=68.6MiB/s][r=17.6k IOPS][eta 00m:07s]
+Jobs: 4 (f=4): [r(4)][75.0%][r=68.8MiB/s][r=17.6k IOPS][eta 00m:05s] 
+Jobs: 4 (f=4): [r(4)][85.0%][r=68.8MiB/s][r=17.6k IOPS][eta 00m:03s] 
+Jobs: 4 (f=4): [r(4)][95.0%][r=63.1MiB/s][r=16.2k IOPS][eta 00m:01s] 
+Jobs: 4 (f=3): [r(1),f(1),r(2)][100.0%][r=64.5MiB/s][r=16.5k IOPS][eta 00m:00s]
+iops-test-job: (groupid=0, jobs=4): err= 0: pid=51: Fri Feb 18 10:46:21 2022
+  read: IOPS=17.0k, BW=66.5MiB/s (69.7MB/s)(1335MiB/20092msec)
+    slat (nsec): min=1500, max=100131k, avg=39572.09, stdev=1477577.19
+    clat (usec): min=269, max=265185, avg=60048.59, stdev=37757.82
+     lat (usec): min=331, max=265188, avg=60088.76, stdev=37747.49
+    clat percentiles (usec):
+     |  1.00th=[  1385],  5.00th=[  2540], 10.00th=[  4490], 20.00th=[ 19268],
+     | 30.00th=[ 38011], 40.00th=[ 47973], 50.00th=[ 59507], 60.00th=[ 68682],
+     | 70.00th=[ 93848], 80.00th=[ 98042], 90.00th=[100140], 95.00th=[101188],
+     | 99.00th=[154141], 99.50th=[187696], 99.90th=[200279], 99.95th=[208667],
+     | 99.99th=[261096]
+   bw (  KiB/s): min=50118, max=98888, per=100.00%, avg=68333.26, stdev=2486.72, samples=156
+   iops        : min=12529, max=24722, avg=17083.18, stdev=621.73, samples=156
+  lat (usec)   : 500=0.03%, 750=0.13%, 1000=0.15%
+  lat (msec)   : 2=2.76%, 4=6.01%, 10=9.01%, 20=1.99%, 50=21.29%
+  lat (msec)   : 100=48.41%, 250=10.20%, 500=0.03%
+  cpu          : usr=0.82%, sys=2.73%, ctx=144685, majf=0, minf=1074
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.9%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.1%
+     issued rwts: total=341868,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=256
+
+Run status group 0 (all jobs):
+   READ: bw=66.5MiB/s (69.7MB/s), 66.5MiB/s-66.5MiB/s (69.7MB/s-69.7MB/s), io=1335MiB (1400MB), run=20092-20092msec
+
+Disk stats (read/write):
+  sdc: ios=332134/2, merge=9569/27, ticks=13087353/2, in_queue=12425804, util=85.68%
+```
+
 ## Azure Disk - Premium P4
 
-Example from `P4 - 120 IOPS, 25 MBps`. Note: `Max burst IOPS` as seen in below numbers.
+Example test using `P4 - 120 IOPS, 25 MBps`. Note: In below test you can see that you're
+able to reach to `Max burst IOPS` of the `P4`.
 
-See [Premium storage disk sizes](https://docs.microsoft.com/en-us/azure/virtual-machines/premium-storage-performance#premium-storage-disk-sizes).
+See [Premium storage disk sizes](https://docs.microsoft.com/en-us/azure/virtual-machines/premium-storage-performance#premium-storage-disk-sizes)
+for information about disk performance and pricing.
 
 ```bash
 /mnt/premiumdisk # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1

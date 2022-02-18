@@ -21,9 +21,6 @@ location="westeurope"
 az login -o table
 az account set --subscription $subscriptionName -o table
 
-subscriptionID=$(az account show -o tsv --query id)
-az group create -l $location -n $resourceGroupName -o table
-
 # Prepare extensions and providers
 az extension add --upgrade --yes --name aks-preview
 
@@ -34,6 +31,8 @@ az provider register --namespace Microsoft.ContainerService
 
 # Remove extension in case conflicting previews
 az extension remove --name aks-preview
+
+az group create -l $location -n $resourceGroupName -o table
 
 aadAdmingGroup=$(az ad group list --display-name $aadAdminGroupContains --query [].objectId -o tsv)
 echo $aadAdmingGroup
@@ -80,12 +79,15 @@ echo $myip
 #  --enable-private-cluster
 #  --private-dns-zone None
 
+# Enable Ultra Disk:
+# --enable-ultra-ssd
+
 az aks create -g $resourceGroupName -n $aksName \
  --zones 1 2 3 --max-pods 50 --network-plugin azure \
  --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
  --node-osdisk-type Ephemeral \
  --node-vm-size Standard_D8ds_v4 \
- --kubernetes-version 1.21.2 \
+ --kubernetes-version 1.22.6 \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
  --enable-managed-identity \
@@ -96,6 +98,7 @@ az aks create -g $resourceGroupName -n $aksName \
  --vnet-subnet-id $subnetaksid \
  --assign-identity $identityid \
  --api-server-authorized-ip-ranges $myip \
+ --enable-ultra-ssd \
  -o table 
 
 ###################################################################
@@ -220,6 +223,7 @@ cd /mnt/hostpath
 cd /mnt/nfs
 cd /mnt/smb
 cd /mnt/premiumdisk
+cd /mnt/ultradisk
 cd /mnt/netapp-nfs
 cd /home
 mkdir perf-test

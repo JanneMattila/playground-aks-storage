@@ -8,5 +8,12 @@ parameters:
   skuname: UltraSSD_LRS
   kind: managed
   cachingMode: None
-  diskIopsReadWrite: "2000"  # minimum value: 2 IOPS/GiB 
-  diskMbpsReadWrite: "320"   # minimum value: 0.032/GiB
+
+  # Pricing:
+  # https://azure.microsoft.com/en-us/pricing/details/managed-disks/
+  # 256 GiB:
+  # - 76'800 IOPS
+  # - 4'000 MB/s
+  # WARNING: Below costs $5k+ / month!
+  diskIopsReadWrite: "76800"  # minimum value: 2 IOPS/GiB 
+  diskMbpsReadWrite: "4000"   # minimum value: 0.032/GiB
