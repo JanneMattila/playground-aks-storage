@@ -303,6 +303,9 @@ Run status group 0 (all jobs):
 
 Example test using `disk size (GiB): 250`, `Disk IOPS: 76800`, `Disk throughput (MB/s): 4000` and `CachingMode: None`.
 
+> **Important**: Test have been executed using Virtual Machine SKU `Standard_D8ds_v4` which has `Max uncached disk throughput: 12800 IOPS, 192 MBps` and
+`Max burst uncached disk throughput: IOPS/MBps: 16000 IOPS, 400 MBps`. It's limiting below performance numbers!
+
 ```bash
 /mnt/ultradisk # fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=20 --numjobs=4 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
 iops-test-job: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
