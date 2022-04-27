@@ -289,5 +289,20 @@ vmssvm1=$(az vmss list-instances -n $vmss -g $nodeResourceGroup --query [0].inst
 echo $vmssvm1
 az vmss delete-instances --instance-ids $vmssvm1 -n $vmss -g $nodeResourceGroup
 
+# Note about ZRS: Migration of workload from one zone to another zone 
+# might take some time and you might see these kind of messages before
+# migration is successful:
+kubectl describe pod -n demos
+# 
+# Events:
+#  Type     Reason                  Age                   From                     Message
+#  ----     ------                  ----                  ----                     -------
+#  Normal   Scheduled               8m19s                 default-scheduler        Successfully assigned demos/webapp-fs-tester-demo-6844679846-nz57x to aks-nodepool1-29389741-vmss000001
+#  Warning  FailedAttachVolume      8m19s                 attachdetach-controller  Multi-Attach error for volume "pvc-20aac590-010b-44f3-9173-7c5f0da7f8f2" Volume is already exclusively attached to one node and can't be attached to another
+#  Warning  FailedMount             4m3s (x2 over 6m16s)  kubelet                  Unable to attach or mount volumes: unmounted volumes=[premiumdisk], unattached volumes=[premiumdisk kube-api-access-njm58]: timed out waiting for the condition
+#  Normal   SuccessfulAttachVolume  2m6s                  attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-20aac590-010b-44f3-9173-7c5f0da7f8f2"
+#  Warning  FailedMount             105s                  kubelet                  Unable to attach or mount volumes: unmounted volumes=[premiumdisk], unattached volumes=[kube-api-access-njm58 premiumdisk]: timed out waiting for the condition
+#  Normal   Pulling                 3s                    kubelet                  Pulling image "jannemattila/webapp-fs-tester:1.1.7"
+
 # Wipe out the resources
 az group delete --name $resourceGroupName -y
