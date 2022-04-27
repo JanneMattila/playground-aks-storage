@@ -121,6 +121,23 @@ kubectl get nodes -o custom-columns=NAME:'{.metadata.name}',REGION:'{.metadata.l
 # aks-nodepool1-30714164-vmss000001   westeurope   westeurope-2
 # aks-nodepool1-30714164-vmss000002   westeurope   westeurope-3
 
+# List installed Container Storage Interfaces (CSI)
+# More information here:
+# https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers
+# https://github.com/kubernetes-sigs/azurefile-csi-driver/blob/master/docs/driver-parameters.md
+kubectl get storageclasses
+
+kubectl describe storageclass azurefile-csi
+kubectl describe storageclass azurefile-csi-premium
+kubectl describe storageclass azurefile-premium
+kubectl describe storageclass managed-premium
+kubectl describe storageclass managed-csi-premium
+
+# In simple diff view
+diff <(kubectl describe storageclass azurefile-csi-premium) <(kubectl describe storageclass azurefile-premium)
+diff <(kubectl describe storageclass azurefile-csi) <(kubectl describe storageclass azurefile-premium)
+diff <(kubectl describe storageclass managed-premium) <(kubectl describe storageclass managed-csi-premium)
+
 # Create namespace
 kubectl apply -f namespace.yaml
 
@@ -136,6 +153,7 @@ kubectl get deployment -n demos
 kubectl describe deployment -n demos
 
 kubectl get pod -n demos
+kubectl describe pod -n demos
 kubectl get pod -n demos -o custom-columns=NAME:'{.metadata.name}',NODE:'{.spec.nodeName}'
 
 kubectl get pod -n demos
@@ -259,9 +277,11 @@ kubectl delete $pod1 -n demos
 
 # Delete VM in VMSS
 # -----------------
-# Note: If you use Azure Disk from Zone-1, then
+# Note: If you use Azure Disk with LRS from Zone-1, then
 # killing node from matching zone will bring app down until
 # AKS introduces new node to that zone.
+# If your Azure Disk is ZRS, then pod will be scheduled to
+# another zone and it will use storage from that zone.
 nodeResourceGroup=$(az aks show -g $resourceGroupName -n $aksName --query nodeResourceGroup -o tsv)
 vmss=$(az vmss list -g $nodeResourceGroup --query [0].name -o tsv)
 az vmss list-instances -n $vmss -g $nodeResourceGroup -o table

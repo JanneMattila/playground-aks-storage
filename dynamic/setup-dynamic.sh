@@ -50,7 +50,10 @@ kubectl describe pvc smb-pvc -n demos
 #######################
 
 # Enable Premium Disk with dynamic provisioning
+# - Run this to create Locally redundant storage (LRS)
 kubectl apply -f dynamic/azuredisk
+# - Run this to create Zone-redundant storage (ZRS)
+kubectl apply -f dynamic/azuredisk-zrs
 
 kubectl describe pvc premiumdisk-pvc -n demos
 

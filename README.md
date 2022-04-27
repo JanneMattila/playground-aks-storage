@@ -36,6 +36,9 @@ Example performance testing numbers has been put to [notes](notes.md).
 - Azure NetApp Files
   - [Service levels for Azure NetApp Files](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-service-levels)
 - Zone redundant
+  - [Azure disk availability zone support](https://docs.microsoft.com/en-us/azure/aks/availability-zones#azure-disk-availability-zone-support)
+  - [Redundancy options for managed disks](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-redundancy)
+  - [Use the Azure disk Container Storage Interface (CSI) drivers in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/azure-disk-csi)
 - Static vs. Dynamic [provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#provisioning)
   - What if you need to re-create the cluster?
 - [Compare access to Azure Files, Blob Storage, and Azure NetApp Files with NFS](https://docs.microsoft.com/en-us/azure/storage/common/nfs-comparison)
