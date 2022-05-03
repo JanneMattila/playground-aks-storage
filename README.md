@@ -35,6 +35,8 @@ Example performance testing numbers has been put to [notes](notes.md).
   - [Scalability and performance targets](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-scale-targets)
 - Azure NetApp Files
   - [Service levels for Azure NetApp Files](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-service-levels)
+- [Azure Blob](https://github.com/kubernetes-sigs/blob-csi-driver)
+  - [BlobFuse](https://github.com/Azure/azure-storage-fuse)
 - Zone redundant
   - [Azure disk availability zone support](https://docs.microsoft.com/en-us/azure/aks/availability-zones#azure-disk-availability-zone-support)
   - [Redundancy options for managed disks](https://docs.microsoft.com/en-us/azure/virtual-machines/disks-redundancy)
