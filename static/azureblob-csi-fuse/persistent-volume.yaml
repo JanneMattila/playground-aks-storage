@@ -8,6 +8,7 @@ spec:
     storage: 100Gi
   accessModes:
     - ReadWriteMany
+  storageClassName: blob-csi-fuse
   persistentVolumeReclaimPolicy: Retain
   mountOptions:
     - -o allow_other
@@ -19,8 +20,9 @@ spec:
     # `#` is not allowed in self defined volumeHandle
     volumeHandle: blobfusepv
     volumeAttributes:
-      storageAccount: myaksstorage00010
-      containerName: blob
+      resourceGroup: ${resourceGroupName}
+      storageAccount: ${premiumStorageName}
+      containerName: ${premiumStorageBlobContainerName}
     nodeStageSecretRef:
-      name: azurefile-secret
+      name: azureblob-secret
       namespace: demos

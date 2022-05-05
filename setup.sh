@@ -1,11 +1,15 @@
 #!/bin/bash
 
+# Enable auto export
+set -a
+
 # All the variables for the deployment
 subscriptionName="AzureDev"
 aadAdminGroupContains="janne''s"
 
 aksName="myaksstorage"
 premiumStorageName="myaksstorage00010"
+premiumStorageBlobContainerName="blob"
 premiumStorageShareNameSMB="smb"
 premiumStorageShareNameNFS="nfs"
 workspaceName="mystorageworkspace"
@@ -87,10 +91,9 @@ az aks create -g $resourceGroupName -n $aksName \
  --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
  --node-osdisk-type Ephemeral \
  --node-vm-size Standard_D8ds_v4 \
- --kubernetes-version 1.22.6 \
+ --kubernetes-version 1.23.5 \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
- --enable-managed-identity \
  --disable-local-accounts \
  --aad-admin-group-object-ids $aadAdmingGroup \
  --workspace-resource-id $workspaceid \
@@ -143,6 +146,9 @@ kubectl apply -f namespace.yaml
 
 # Continue using "static provisioning" example
 # => static/setup-static.sh
+
+# Continue using "static provisioning blob" example
+# => static/setup-static-blob.sh
 
 # Continue using "dynamic provisioning" example
 # => dynamic/setup-dynamic.sh

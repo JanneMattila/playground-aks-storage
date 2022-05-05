@@ -6,8 +6,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: blob-csi-fuse
   resources:
     requests:
       storage: 100Gi
-  volumeName: blob-csi-fuse
+  volumeName: blobfuse-pv
