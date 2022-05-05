@@ -309,6 +309,9 @@ kubectl describe pod -n demos
 #  Normal   SuccessfulAttachVolume  2m6s                  attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-20aac590-010b-44f3-9173-7c5f0da7f8f2"
 #  Warning  FailedMount             105s                  kubelet                  Unable to attach or mount volumes: unmounted volumes=[premiumdisk], unattached volumes=[kube-api-access-njm58 premiumdisk]: timed out waiting for the condition
 #  Normal   Pulling                 3s                    kubelet                  Pulling image "jannemattila/webapp-fs-tester:1.1.7"
+#
+# More information here:
+# https://github.com/kubernetes-sigs/azuredisk-csi-driver/tree/master/docs/known-issues/node-shutdown-recovery
 
 # Wipe out the resources
 az group delete --name $resourceGroupName -y
