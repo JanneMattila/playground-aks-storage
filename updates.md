@@ -11,7 +11,9 @@ then this part is crucial to understand:
 
 Above taken from [Dynamically create and use a persistent volume with Azure disks in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/azure-disks-dynamic-pv).
 
-Here are some tests to help you plan your application setup:
+Here are some tests to help you plan your application setup. 
+Please note that below results have been achieved with *very* **very** limited testing.
+Your mileage *will* vary.
 
 | Scenario                                                                     | Result                                                                                                                                                           |
 | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
