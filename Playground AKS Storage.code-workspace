@@ -12,7 +12,8 @@
 			"redhat.vscode-yaml",
 			"ms-kubernetes-tools.vscode-kubernetes-tools",
 			"mads-hartmann.bash-ide-vscode",
-			"TakumiI.markdowntable"
+			"takumii.markdowntable",
+			"lunuan.kubernetes-templates"
 		]
 	}
 }
