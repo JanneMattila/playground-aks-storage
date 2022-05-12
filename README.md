@@ -28,6 +28,7 @@ Example performance testing numbers has been put to [notes](notes.md).
 - [Container Storage Interface (CSI)](https://docs.microsoft.com/en-us/azure/aks/csi-storage-drivers)
   - [azurefile-csi-driver parameters](https://github.com/kubernetes-sigs/azurefile-csi-driver/blob/master/docs/driver-parameters.md)
 - Azure Disk
+  - [Burstable Managed Disk](https://github.com/Azure-Samples/burstable-managed-csi-premium)
 - Azure Files
   - Premium
   - [Protocols](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-planning#available-protocols): [SMB](https://docs.microsoft.com/en-us/azure/storage/files/files-smb-protocol) or [NFS](https://docs.microsoft.com/en-us/azure/storage/files/files-nfs-protocol)
