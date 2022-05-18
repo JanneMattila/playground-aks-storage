@@ -47,3 +47,5 @@ Example performance testing numbers has been put to [notes](notes.md).
 - [Compare access to Azure Files, Blob Storage, and Azure NetApp Files with NFS](https://docs.microsoft.com/en-us/azure/storage/common/nfs-comparison)
 - Azure Blob storage NFS v3.0
 - [Availability Zones](https://kubernetes-sigs.github.io/cloud-provider-azure/topics/availability-zones/)
+- [PodDisruptionBudget ](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
+  - [Think about how your application reacts to disruptions](https://kubernetes.io/docs/tasks/run-application/configure-pdb/#think-about-how-your-application-reacts-to-disruptions)
