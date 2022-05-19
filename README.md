@@ -49,3 +49,7 @@ Example performance testing numbers has been put to [notes](notes.md).
 - [Availability Zones](https://kubernetes-sigs.github.io/cloud-provider-azure/topics/availability-zones/)
 - [PodDisruptionBudget ](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
   - [Think about how your application reacts to disruptions](https://kubernetes.io/docs/tasks/run-application/configure-pdb/#think-about-how-your-application-reacts-to-disruptions)
+- Single-Instance vs. Replicated Stateful Application
+  - [Run a Single-Instance Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/)
+  - [Run a Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/)
+  
