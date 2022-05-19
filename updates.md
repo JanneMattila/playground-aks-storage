@@ -11,6 +11,10 @@ then this part is crucial to understand:
 
 Above taken from [Dynamically create and use a persistent volume with Azure disks in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/azure-disks-dynamic-pv).
 
+See also [Single-Instance Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/)
+and [Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/)
+for more information on this topic.  
+
 Here are some tests to help you plan your application setup. 
 Please note that below results have been achieved with *very* **very** limited testing.
 Your mileage *will* vary.
@@ -20,7 +24,7 @@ Your mileage *will* vary.
 | Single node & `RollingUpdate`                                                | Downtime fraction of second or not observed                                                                                                                      |
 | Single node & `Recreate`                                                     | 10 seconds ± 5 seconds                                                                                                                                           |
 | Two nodes & `RollingUpdate` & Workload stays in same node                    | Downtime fraction of second or not observed                                                                                                                      |
-| Two nodes & `Deployment` & `RollingUpdate` & Workload moved to another node  | Deployment stuck to `Unable to attach or mount volumes`                                                                                                          |
+| Two nodes & `Deployment` & `RollingUpdate` & Workload moved to another node  | [Deployment](https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/#updating) stuck to `Unable to attach or mount volumes`                                                                                                          |
 | Two nodes & `Deployment` & `Recreate` & Workload moved to another node       | 45 seconds ± 10 seconds                                                                                                                                          |
 | Two nodes & `StatefulSet` & `RollingUpdate` & Workload moved to another node | 45 seconds ± 10 seconds                                                                                                                                          |
 | Two nodes & Node failure                                                     | ~8 minutes (see [workaround](https://github.com/kubernetes-sigs/azuredisk-csi-driver/tree/master/docs/known-issues/node-shutdown-recovery) to get to ~2 minutes) |
