@@ -52,4 +52,4 @@ Example performance testing numbers has been put to [notes](notes.md).
 - Single-Instance vs. Replicated Stateful Application
   - [Run a Single-Instance Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/)
   - [Run a Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/)
-  
+- [Application-based asynchronous replication](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region#application-based-asynchronous-replication)
