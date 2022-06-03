@@ -38,7 +38,7 @@ az extension remove --name aks-preview
 
 az group create -l $location -n $resourceGroupName -o table
 
-aadAdmingGroup=$(az ad group list --display-name $aadAdminGroupContains --query [].objectId -o tsv)
+aadAdmingGroup=$(az ad group list --display-name $aadAdminGroupContains --query [].id -o tsv)
 echo $aadAdmingGroup
 
 workspaceid=$(az monitor log-analytics workspace create -g $resourceGroupName -n $workspaceName --query id -o tsv)
