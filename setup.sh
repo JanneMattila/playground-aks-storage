@@ -113,8 +113,8 @@ az aks update -g $resourceGroupName -n $aksName --api-server-authorized-ip-range
 ###################################################################
 
 sudo az aks install-cli
-
 az aks get-credentials -n $aksName -g $resourceGroupName --overwrite-existing
+kubelogin convert-kubeconfig
 
 kubectl get nodes
 kubectl get nodes -o wide
