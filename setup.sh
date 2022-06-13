@@ -1,29 +1,28 @@
-#!/bin/bash
-
 # Enable auto export
 set -a
 
 # All the variables for the deployment
-subscriptionName="AzureDev"
-aadAdminGroupContains="janne''s"
+subscription_name="AzureDev"
+azuread_admin_group_contains="janne''s"
 
-aksName="myaksstorage"
-premiumStorageName="myaksstorage00010"
-premiumStorageBlobContainerName="blob"
-premiumStorageShareNameSMB="smb"
-premiumStorageShareNameNFS="nfs"
-workspaceName="mystorageworkspace"
-vnetName="myaksstorage-vnet"
-subnetAks="AksSubnet"
-subnetStorage="StorageSubnet"
-subnetNetApp="NetAppSubnet"
-identityName="myaksstorage"
-resourceGroupName="rg-myaksstorage"
+aks_name="myaksstorage"
+premium_storage_name="myaksstorage00010"
+premium_storage_blob_container_name="blob"
+premium_storage_share_name_smb="smb"
+premium_storage_share_name_nfs="nfs"
+workspace_name="log-mystorageworkspace"
+vnet_name="vnet-myaksstorage"
+subnet_aks_name="snet-aks"
+subnet_storage_name="snet-storage"
+subnet_netapp_name="snet-netapp"
+cluster_identity_name="id-myaksstorage-cluster"
+kubelet_identity_name="id-myaksstorage-kubelet"
+resource_group_name="rg-myaksstorage"
 location="westeurope"
 
 # Login and set correct context
 az login -o table
-az account set --subscription $subscriptionName -o table
+az account set --subscription $subscription_name -o table
 
 # Prepare extensions and providers
 az extension add --upgrade --yes --name aks-preview
@@ -34,59 +33,58 @@ az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/P
 az provider register --namespace Microsoft.ContainerService
 
 # Remove extension in case conflicting previews
-az extension remove --name aks-preview
+# az extension remove --name aks-preview
 
-az group create -l $location -n $resourceGroupName -o table
+az group create -l $location -n $resource_group_name -o table
 
-aadAdmingGroup=$(az ad group list --display-name $aadAdminGroupContains --query [].id -o tsv)
-echo $aadAdmingGroup
+azuread_admin_group_id=$(az ad group list --display-name $azuread_admin_group_contains --query [].id -o tsv)
+echo $azuread_admin_group_id
 
-workspaceid=$(az monitor log-analytics workspace create -g $resourceGroupName -n $workspaceName --query id -o tsv)
-echo $workspaceid
+workspace_id=$(az monitor log-analytics workspace create -g $resource_group_name -n $workspace_name --query id -o tsv)
+echo $workspace_id
 
-vnetid=$(az network vnet create -g $resourceGroupName --name $vnetName \
+vnet_id=$(az network vnet create -g $resource_group_name --name $vnet_name \
   --address-prefix 10.0.0.0/8 \
   --query newVNet.id -o tsv)
-echo $vnetid
+echo $vnet_id
 
-subnetaksid=$(az network vnet subnet create -g $resourceGroupName --vnet-name $vnetName \
-  --name $subnetAks --address-prefixes 10.2.0.0/24 \
+subnet_aks_id=$(az network vnet subnet create -g $resource_group_name --vnet-name $vnet_name \
+  --name $subnet_aks_name --address-prefixes 10.2.0.0/24 \
   --query id -o tsv)
-echo $subnetaksid
+echo $subnet_aks_id
 
-subnetstorageid=$(az network vnet subnet create -g $resourceGroupName --vnet-name $vnetName \
-  --name $subnetStorage --address-prefixes 10.3.0.0/24 \
+subnet_storage_id=$(az network vnet subnet create -g $resource_group_name --vnet-name $vnet_name \
+  --name $subnet_storage_name --address-prefixes 10.3.0.0/24 \
   --query id -o tsv)
-echo $subnetstorageid
+echo $subnet_storage_id
 
 # Delegate a subnet to Azure NetApp Files
 # https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-delegate-subnet
-subnetnetappid=$(az network vnet subnet create -g $resourceGroupName --vnet-name $vnetName \
-  --name $subnetNetApp --address-prefixes 10.4.0.0/28 \
+subnet_netapp_id=$(az network vnet subnet create -g $resource_group_name --vnet-name $vnet_name \
+  --name $subnet_netapp_name --address-prefixes 10.4.0.0/28 \
   --delegations "Microsoft.NetApp/volumes" \
   --query id -o tsv)
-echo $subnetnetappid
+echo $subnet_netapp_id
 
-identityid=$(az identity create --name $identityName --resource-group $resourceGroupName --query id -o tsv)
-echo $identityid
+cluster_identity_json=$(az identity create --name $cluster_identity_name --resource-group $resource_group_name -o json)
+kubelet_identity_json=$(az identity create --name $kubelet_identity_name --resource-group $resource_group_name -o json)
+cluster_identity_id=$(echo $cluster_identity_json | jq -r .id)
+kubelet_identity_id=$(echo $kubelet_identity_json | jq -r .id)
+kubelet_identity_object_id=$(echo $kubelet_identity_json | jq -r .principalId)
+echo $cluster_identity_id
+echo $kubelet_identity_id
+echo $kubelet_identity_object_id
 
 az aks get-versions -l $location -o table
 
 # Note: for public cluster you need to authorize your ip to use api
-myip=$(curl --no-progress-meter https://api.ipify.org)
-echo $myip
-
-# Note about private clusters:
-# https://docs.microsoft.com/en-us/azure/aks/private-clusters
-
-# For private cluster add these:
-#  --enable-private-cluster
-#  --private-dns-zone None
+my_ip=$(curl --no-progress-meter https://api.ipify.org)
+echo $my_ip
 
 # Enable Ultra Disk:
 # --enable-ultra-ssd
 
-az aks create -g $resourceGroupName -n $aksName \
+aks_json=$(az aks create -g $resource_group_name -n $aks_name \
  --zones 1 2 3 --max-pods 50 --network-plugin azure \
  --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
  --node-osdisk-type Ephemeral \
@@ -94,27 +92,33 @@ az aks create -g $resourceGroupName -n $aksName \
  --kubernetes-version 1.23.5 \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
+ --enable-azure-rbac \
  --disable-local-accounts \
- --aad-admin-group-object-ids $aadAdmingGroup \
- --workspace-resource-id $workspaceid \
+ --aad-admin-group-object-ids $azuread_admin_group_id \
+ --workspace-resource-id $workspace_id \
  --load-balancer-sku standard \
- --vnet-subnet-id $subnetaksid \
- --assign-identity $identityid \
- --api-server-authorized-ip-ranges $myip \
+ --vnet-subnet-id $subnet_aks_id \
+ --assign-identity $cluster_identity_id \
+ --assign-kubelet-identity $kubelet_identity_id \
+ --api-server-authorized-ip-ranges $my_ip \
  --enable-ultra-ssd \
- -o table 
+ -o json)
+
+aks_node_resource_group_name=$(echo $aks_json | jq -r .nodeResourceGroup)
+node_resource_group_id=$(az group show --name $aks_node_resource_group_name --query id -o tsv)
+echo $node_resource_group_id
 
 ###################################################################
 # Enable current ip
-az aks update -g $resourceGroupName -n $aksName --api-server-authorized-ip-ranges $myip
+az aks update -g $resource_group_name -n $aks_name --api-server-authorized-ip-ranges $my_ip
 
 # Clear all authorized ip ranges
-az aks update -g $resourceGroupName -n $aksName --api-server-authorized-ip-ranges ""
+az aks update -g $resource_group_name -n $aks_name --api-server-authorized-ip-ranges ""
 ###################################################################
 
 sudo az aks install-cli
-az aks get-credentials -n $aksName -g $resourceGroupName --overwrite-existing
-kubelogin convert-kubeconfig
+az aks get-credentials -n $aks_name -g $resource_group_name --overwrite-existing
+kubelogin convert-kubeconfig -l azurecli
 
 kubectl get nodes
 kubectl get nodes -o wide
@@ -153,7 +157,8 @@ kubectl apply -f namespace.yaml
 # Continue using "dynamic provisioning" example
 # => dynamic/setup-dynamic.sh
 
-kubectl apply -f demos
+kubectl apply -f demos/deployment.yaml
+# kubectl apply -f demos/statefulset.yaml
 
 kubectl get deployment -n demos
 kubectl describe deployment -n demos
@@ -170,10 +175,10 @@ kubectl describe $pod1 -n demos
 
 kubectl get service -n demos
 
-ingressip=$(kubectl get service -n demos -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
-echo $ingressip
+ingress_ip=$(kubectl get service -n demos -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+echo $ingress_ip
 
-curl $ingressip/swagger/index.html
+curl $ingress_ip/swagger/index.html
 # -> OK!
 
 cat <<EOF > payload.json
@@ -186,31 +191,31 @@ EOF
 
 # Quick tests
 # - Azure Files NFSv4.1
-curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 # - Azure Files SMB
-curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 # - Azure NetApp Files NFSv4.1
-curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 
 # Test same in loop
 # - Azure Files NFSv4.1
 for i in {0..50}
 do 
-  curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+  curl --no-progress-meter -X POST --data '{"path": "/mnt/nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 done
 # Examples: 1.8357, 2.918, 1.9534, 2.9706, 1.7649, 1.8872
 
 # - Azure Files SMB
 for i in {0..50}
 do 
-  curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+  curl --no-progress-meter -X POST --data '{"path": "/mnt/smb","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 done
 # Examples: 15.7838, 10.2626, 14.653, 11.2682, 9.8133, 15.9403, 11.6134
 
 # - Azure NetApp Files NFSv4.1
 for i in {0..50}
 do 
-  curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingressip/api/files" | jq .milliseconds
+  curl --no-progress-meter -X POST --data '{"path": "/mnt/netapp-nfs","filter": "*.*","recursive": true}' -H "Content-Type: application/json" "http://$ingress_ip/api/files" | jq .milliseconds
 done
 # Examples: 0.4258, 0.3901,0.407, 0.5709, 0.3992, 0.3968
 
@@ -218,8 +223,8 @@ done
 # You can also use calculators e.g., https://www.calculator.net/bandwidth-calculator.html#download-time
 truncate -s 10m demo1.bin
 ls -lhF *.bin
-time curl -T demo1.bin -X POST "http://$ingressip/api/upload"
-time curl --no-progress-meter -X POST --data '{"size": 10485760}' -H "Content-Type: application/json" "http://$ingressip/api/download" -o demo2.bin
+time curl -T demo1.bin -X POST "http://$ingress_ip/api/upload"
+time curl --no-progress-meter -X POST --data '{"size": 10485760}' -H "Content-Type: application/json" "http://$ingress_ip/api/download" -o demo2.bin
 rm *.bin
 
 # Connect to first pod
@@ -247,6 +252,7 @@ cd /mnt/hostpath
 cd /mnt/nfs
 cd /mnt/smb
 cd /mnt/premiumdisk
+cd /mnt/premiumdisk-v2
 cd /mnt/ultradisk
 cd /mnt/netapp-nfs
 cd /home
@@ -288,12 +294,11 @@ kubectl delete $pod1 -n demos
 # AKS introduces new node to that zone.
 # If your Azure Disk is ZRS, then pod will be scheduled to
 # another zone and it will use storage from that zone.
-nodeResourceGroup=$(az aks show -g $resourceGroupName -n $aksName --query nodeResourceGroup -o tsv)
-vmss=$(az vmss list -g $nodeResourceGroup --query [0].name -o tsv)
-az vmss list-instances -n $vmss -g $nodeResourceGroup -o table
-vmssvm1=$(az vmss list-instances -n $vmss -g $nodeResourceGroup --query [0].instanceId -o tsv)
-echo $vmssvm1
-az vmss delete-instances --instance-ids $vmssvm1 -n $vmss -g $nodeResourceGroup
+vmss=$(az vmss list -g $node_resource_group_name --query [0].name -o tsv)
+az vmss list-instances -n $vmss -g $node_resource_group_name -o table
+vmss_vm1=$(az vmss list-instances -n $vmss -g $node_resource_group_name --query [0].instanceId -o tsv)
+echo $vmss_vm1
+az vmss delete-instances --instance-ids $vmss_vm1 -n $vmss -g $node_resource_group_name
 
 # Note about ZRS: Migration of workload from one zone to another zone 
 # might take some time and you might see these kind of messages before
@@ -314,4 +319,4 @@ kubectl describe pod -n demos
 # https://github.com/kubernetes-sigs/azuredisk-csi-driver/tree/master/docs/known-issues/node-shutdown-recovery
 
 # Wipe out the resources
-az group delete --name $resourceGroupName -y
+az group delete --name $resource_group_name -y

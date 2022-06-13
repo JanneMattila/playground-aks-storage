@@ -1,0 +1,17 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azuredisk-csi-v2-sc
+provisioner: disk2.csi.azure.com
+parameters:
+  # Important:
+  # https://docs.microsoft.com/en-us/azure/aks/availability-zones#azure-disk-availability-zone-support
+  # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-redundancy
+  # ZRS = Zone-redundant storage
+  # https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region
+  # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-shared#premium-ssds
+  skuName: Premium_ZRS
+  maxShares: "3"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true

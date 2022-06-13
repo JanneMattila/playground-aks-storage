@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: premiumdisk-v2-pvc
+  namespace: demos
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: azuredisk-csi-v2-sc
+  resources:
+    requests:
+      storage: 5Gi
