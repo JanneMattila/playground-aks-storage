@@ -9,8 +9,9 @@ parameters:
   # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-redundancy
   # ZRS = Zone-redundant storage
   # https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region
-  # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-shared#premium-ssds
   skuName: Premium_ZRS
+  # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-shared#premium-ssds
+  # -> "Disk bursting isn't available for premium SSDs with 'maxShares > 1'"
   maxShares: "3"
 reclaimPolicy: Delete
 volumeBindingMode: Immediate

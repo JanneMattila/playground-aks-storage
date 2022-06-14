@@ -159,11 +159,12 @@ kubectl apply -f namespace.yaml
 
 kubectl apply -f demos/deployment.yaml
 # kubectl apply -f demos/statefulset.yaml
+kubectl apply -f demos/service.yaml
 
 kubectl get deployment -n demos
 kubectl describe deployment -n demos
 
-kubectl get pod -n demos
+kubectl get pod -n demos -o wide
 kubectl describe pod -n demos
 kubectl get pod -n demos -o custom-columns=NAME:'{.metadata.name}',NODE:'{.spec.nodeName}'
 

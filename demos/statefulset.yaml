@@ -1,12 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: webapp-fs-tester-demo
   namespace: demos
 spec:
   replicas: 1
-  strategy:
-    type: RollingUpdate
+  podManagementPolicy: Parallel
+  serviceName: webapp-fs-tester-demo
+  type: RollingUpdate
   selector:
     matchLabels:
       app: webapp-fs-tester-demo
@@ -18,8 +19,8 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       containers:
-        # - image: jannemattila/webapp-update:1.0.9
-        - image: jannemattila/webapp-fs-tester:1.1.7
+        - image: jannemattila/webapp-update:1.0.9
+          # - image: jannemattila/webapp-fs-tester:1.1.6
           imagePullPolicy: Always
           name: webapp-fs-tester-demo
           # resources:
@@ -34,36 +35,36 @@ spec:
               name: http
               protocol: TCP
           volumeMounts:
-            - name: empty
-              mountPath: /mnt/empty
-            - name: hostpath
-              mountPath: /mnt/hostpath
-            - name: nfs
-              mountPath: /mnt/nfs
-            - name: smb
-              mountPath: /mnt/smb
+            # - name: empty
+            #   mountPath: /mnt/empty
+            # - name: hostpath
+            #   mountPath: /mnt/hostpath
+            # - name: nfs
+            #   mountPath: /mnt/nfs
+            # - name: smb
+            #   mountPath: /mnt/smb
             # - name: blobfuse
             #   mountPath: /mnt/blobfuse
             # - name: premiumdisk
             #   mountPath: /mnt/premiumdisk
-            # - name: premiumdisk-v2
-            #   mountPath: /mnt/premiumdisk-v2
+            - name: premiumdisk-v2
+              mountPath: /mnt/premiumdisk-v2
             # - name: ultradisk
             #   mountPath: /mnt/ultradisk
             # - name: netapp-nfs
             #   mountPath: /mnt/netapp-nfs
       volumes:
-        - name: empty
-          emptyDir: {}
-        - name: hostpath
-          hostPath:
-            path: /mnt
-        - name: nfs
-          persistentVolumeClaim:
-            claimName: nfs-pvc
-        - name: smb
-          persistentVolumeClaim:
-            claimName: smb-pvc
+        # - name: empty
+        #   emptyDir: {}
+        # - name: hostpath
+        #   hostPath:
+        #     path: /mnt
+        # - name: nfs
+        #   persistentVolumeClaim:
+        #     claimName: nfs-pvc
+        # - name: smb
+        #   persistentVolumeClaim:
+        #     claimName: smb-pvc
         # - name: blobfuse
         #   persistentVolumeClaim:
         #     claimName: blobfuse-pvc
@@ -73,9 +74,9 @@ spec:
         # - name: premiumdisk
         #   persistentVolumeClaim:
         #     claimName: premiumdisk-pvc
-        # - name: premiumdisk-v2
-        #   persistentVolumeClaim:
-        #     claimName: premiumdisk-v2-pvc
+        - name: premiumdisk-v2
+          persistentVolumeClaim:
+            claimName: premiumdisk-v2-pvc
         # - name: ultradisk
         #   persistentVolumeClaim:
         #     claimName: ultradisk-pvc

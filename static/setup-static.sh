@@ -178,19 +178,31 @@ kubectl get storageclasses
 # managed-premium                       disk.csi.azure.com    Delete          WaitForFirstConsumer   true                   13m
 
 # We're managing the kubelet identity, therefore we need to assign
-# additional permissions to that identity, so that it can create storages dynamically
-# az role assignment create \
-#   --role "Contributor" \
-#   --assignee-object-id $kubelet_identity_object_id \
-#   --assignee-principal-type ServicePrincipal \
-#   --scope $node_resource_group_id
+# additional permissions to that identity, so that it can create storages
+az role assignment create \
+  --role "Contributor" \
+  --assignee-object-id $kubelet_identity_object_id \
+  --assignee-principal-type ServicePrincipal \
+  --scope $node_resource_group_id
 
 kubectl describe storageclass azuredisk-premium-ssd-zrs-replicas
 
 kubectl apply -f static/azuredisk-csi-v2
-kubectl delete -f static/azuredisk-csi-v2
 
-kubectl get pv -n demos
 kubectl get pvc -n demos
+# NAME                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+# premiumdisk-v2-pvc   Bound    pvc-edbeefce-220e-49f0-b3f4-b8138d724e65   5Gi        RWO            azuredisk-csi-v2-sc   34s
 
 kubectl describe pvc premiumdisk-v2-pvc -n demos
+# This might give following error message in case you have not granted additional
+# roles for kubelet identity:
+#  Type     Reason                Age                From                                                                                        Message
+#  ----     ------                ----               ----                                                                                        -------
+#  Normal   Provisioning          31s (x2 over 32s)  disk2.csi.azure.com_aks-nodepool1-95262068-vmss000001_0400c4a9-7bf7-4015-9e94-b73fce9a7a65  External provisioner is provisioning volume for claim "demos/premiumdisk-v2-pvc"
+#  Warning  ProvisioningFailed    31s                disk2.csi.azure.com_aks-nodepool1-95262068-vmss000001_0400c4a9-7bf7-4015-9e94-b73fce9a7a65  
+#    failed to provision volume with StorageClass "azuredisk-csi-v2-sc": rpc error: code = FailedPrecondition desc = Retriable: false, 
+#    RetryAfter: 0s, HTTPStatusCode: 403, RawError: {"error":{"code":"AuthorizationFailed","message":"The client '61e01c50-4c03-4603-9a11-1a1019e6fa1d' 
+#    with object id '61e01c50-4c03-4603-9a11-1a1019e6fa1d' does not have authorization to perform action 'Microsoft.Compute/disks/write' over scope 
+#    '/subscriptions/5286e93e-b901-4ac7-8d34-407a6e9a58a0/resourceGroups/mc_rg-myaksstorage_myaksstorage_westeurope/providers/Microsoft.Compute/disks/pvc-dcb2fd62-85cd-4311-8ca6-b11c6fdcf8d6'
+#    or the scope is invalid. If access was recently granted, please refresh your credentials."}}
+#
