@@ -105,8 +105,8 @@ aks_json=$(az aks create -g $resource_group_name -n $aks_name \
  -o json)
 
 aks_node_resource_group_name=$(echo $aks_json | jq -r .nodeResourceGroup)
-node_resource_group_id=$(az group show --name $aks_node_resource_group_name --query id -o tsv)
-echo $node_resource_group_id
+aks_node_resource_group_id=$(az group show --name $aks_node_resource_group_name --query id -o tsv)
+echo $aks_node_resource_group_id
 
 ###################################################################
 # Enable current ip
@@ -295,11 +295,11 @@ kubectl delete $pod1 -n demos
 # AKS introduces new node to that zone.
 # If your Azure Disk is ZRS, then pod will be scheduled to
 # another zone and it will use storage from that zone.
-vmss=$(az vmss list -g $node_resource_group_name --query [0].name -o tsv)
-az vmss list-instances -n $vmss -g $node_resource_group_name -o table
-vmss_vm1=$(az vmss list-instances -n $vmss -g $node_resource_group_name --query [0].instanceId -o tsv)
+vmss=$(az vmss list -g $aks_node_resource_group_name --query [0].name -o tsv)
+az vmss list-instances -n $vmss -g $aks_node_resource_group_name -o table
+vmss_vm1=$(az vmss list-instances -n $vmss -g $aks_node_resource_group_name --query [0].instanceId -o tsv)
 echo $vmss_vm1
-az vmss delete-instances --instance-ids $vmss_vm1 -n $vmss -g $node_resource_group_name
+az vmss delete-instances --instance-ids $vmss_vm1 -n $vmss -g $aks_node_resource_group_name
 
 # Note about ZRS: Migration of workload from one zone to another zone 
 # might take some time and you might see these kind of messages before
