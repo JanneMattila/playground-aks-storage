@@ -136,13 +136,19 @@ kubectl describe pvc smb-pvc -n demos
 # https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/deploy/example/failover/README.md
 # https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/docs/perf-profiles.md
 
-# Install the Azure Disk CSI Driver V2 
-helm repo add azuredisk-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/master/charts
+# Install the Azure Disk CSI Driver V2
+branch="main_v2" # vs. master
+version="v2.0.0-beta.3" # vs. v2.0.0-alpha.1
 
+# helm repo remove azuredisk-csi-driver
+helm repo add azuredisk-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/$branch/charts
+helm search repo -l azuredisk-csi-driver --devel
+
+# helm uninstall azuredisk-csi-driver-v2 --namespace=kube-system
 helm install azuredisk-csi-driver-v2 azuredisk-csi-driver/azuredisk-csi-driver \
   --namespace kube-system \
-  --version v2.0.0-alpha.1 \
-  --values=https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/master/charts/v2.0.0-alpha.1/azuredisk-csi-driver/side-by-side-values.yaml
+  --version $version \
+  --values=https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/$branch/charts/$version/azuredisk-csi-driver/side-by-side-values.yaml
 
 helm status azuredisk-csi-driver-v2 --namespace=kube-system
 kubectl --namespace=kube-system get pods --selector="app.kubernetes.io/instance=azuredisk-csi-driver-v2"
@@ -183,7 +189,7 @@ az role assignment create \
   --role "Contributor" \
   --assignee-object-id $kubelet_identity_object_id \
   --assignee-principal-type ServicePrincipal \
-  --scope $node_resource_group_id
+  --scope $aks_node_resource_group_id
 
 kubectl describe storageclass azuredisk-premium-ssd-zrs-replicas
 

@@ -319,5 +319,18 @@ kubectl describe pod -n demos
 # More information here:
 # https://github.com/kubernetes-sigs/azuredisk-csi-driver/tree/master/docs/known-issues/node-shutdown-recovery
 
+#
+# For comparison, here is matching output when using "azuredisk-csi-driver-v2" with version "v2.0.0-beta.3":
+#
+# Events:
+#   Type     Reason                  Age    From                     Message
+#   ----     ------                  ----   ----                     -------
+#   Normal   Scheduled               3m21s  default-scheduler        Successfully assigned demos/webapp-fs-tester-demo-574867997f-txbk8 to aks-nodepool1-17745966-vmss000002
+#   Warning  FailedAttachVolume      3m21s  attachdetach-controller  Multi-Attach error for volume "pvc-13868150-49ab-4c67-91b8-e583fd4c1cbf" Volume is already exclusively attached to one node and can't be attached to another
+#   Warning  FailedMount             78s    kubelet                  Unable to attach or mount volumes: unmounted volumes=[premiumdisk-v2], unattached volumes=[premiumdisk-v2 kube-api-access-9mq9r]: timed out waiting for the condition
+#   Normal   SuccessfulAttachVolume  9s     attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-13868150-49ab-4c67-91b8-e583fd4c1cbf"
+#   Normal   Pulling                 6s     kubelet                  Pulling image "jannemattila/webapp-update:1.0.9"
+#
+
 # Wipe out the resources
 az group delete --name $resource_group_name -y

@@ -12,7 +12,7 @@ parameters:
   skuName: Premium_ZRS
   # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-shared#premium-ssds
   # -> "Disk bursting isn't available for premium SSDs with 'maxShares > 1'"
-  maxShares: "3"
+  maxShares: "2"
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
