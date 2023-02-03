@@ -64,7 +64,7 @@ azureuser@vm:~$ mount
 
 Create sub-folders to the fileshare:
 
-````bash
+```bash
 azureuser@vm:$ cd /mnt/nfs
 azureuser@vm:/mnt/nfs$ mkdir app1
 azureuser@vm:/mnt/nfs$ mkdir app2
