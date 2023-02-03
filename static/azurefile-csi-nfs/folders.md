@@ -1,11 +1,14 @@
 # Folders using `folderName`
 
-You can mount only sub-folders for NFS fileshare to your containers.
+You can mount only sub-folders of NFS fileshare to your containers.
 
 Here are the main steps:
 
 1. Create storage account and NFS fileshare
-2. Create PV with `folderName` to map to sub-folder
+2. Create required sub-folders to the fileshare
+3. Create PV with `folderName` to map to sub-folder
+
+Here is example yaml:
 
 ```yaml
 apiVersion: v1
@@ -29,7 +32,7 @@ spec:
       protocol: nfs
 ```
 
-You might get following error if `app1` folder does not exist:
+You might get following error if `app1` folder does not exist, when you deploy your application:
 
 `kubectl describe pod -n demo`
 
@@ -49,20 +52,20 @@ mount.nfs: Either use '-o nolock' to keep locks local, or start statd.
 After you connect to that fileshare using e.g., Linux VM:
 
 ```bash
-azureuser@vm~$ sudo apt-get -y update
-azureuser@vm~$ sudo apt-get install nfs-common
-azureuser@vm~$ sudo mkdir -p /mnt/nfs
-azureuser@vm~$ sudo mount -t nfs <storage>.file.core.windows.net:/<storage>/nfs /mnt/nfs -o vers=4,minorversion=1,sec=sys
-azureuser@vm:$ cd /mnt/nfs
-azureuser@vm:/mnt/nfs$ mount
+azureuser@vm:~$ sudo apt-get -y update
+azureuser@vm:~$ sudo apt-get install nfs-common
+azureuser@vm:~$ sudo mkdir -p /mnt/nfs
+azureuser@vm:~$ sudo mount -t nfs <storage>.file.core.windows.net:/<storage>/nfs /mnt/nfs -o vers=4,minorversion=1,sec=sys
+azureuser@vm:~$ mount
 /dev/sda1 on / type ext4 (rw,relatime,discard)
 # <clipped>
 <storage>10.file.core.windows.net:/<storage>/nfs on /mnt/nfs type nfs4 (rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.2.0.53,local_lock=none,addr=10.3.0.4)
 ```
 
-Create directories:
+Create sub-folders to the fileshare:
 
 ````bash
+azureuser@vm:$ cd /mnt/nfs
 azureuser@vm:/mnt/nfs$ mkdir app1
 azureuser@vm:/mnt/nfs$ mkdir app2
 ```
