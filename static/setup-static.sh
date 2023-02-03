@@ -47,7 +47,7 @@ az network vnet subnet update \
 storage_pe_id=$(az network private-endpoint create \
     --name storage-pe \
     --resource-group $resource_group_name \
-    --vnet-name $vnet_name --subnet $subnet_storage \
+    --vnet-name $vnet_name --subnet $subnet_storage_name \
     --private-connection-resource-id $storage_id \
     --group-id file \
     --connection-name storage-connection \

@@ -13,7 +13,8 @@
 			"ms-kubernetes-tools.vscode-kubernetes-tools",
 			"mads-hartmann.bash-ide-vscode",
 			"takumii.markdowntable",
-			"lunuan.kubernetes-templates"
+			"lunuan.kubernetes-templates",
+			"jannemattila.send-snippet-to-terminal"
 		]
 	}
 }

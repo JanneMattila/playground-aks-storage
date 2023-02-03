@@ -19,6 +19,7 @@ spec:
     volumeHandle: nfspv
     volumeAttributes:
       storageAccount: myaksstorage00010
+      # folderName: app1
       shareName: nfs
       protocol: nfs
     nodeStageSecretRef:

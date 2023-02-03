@@ -2,8 +2,8 @@
 set -a
 
 # All the variables for the deployment
-subscription_name="AzureDev"
-azuread_admin_group_contains="janne''s"
+subscription_name="development"
+azuread_admin_group_contains="janneops"
 
 aks_name="myaksstorage"
 premium_storage_name="myaksstorage00010"
@@ -89,7 +89,7 @@ aks_json=$(az aks create -g $resource_group_name -n $aks_name \
  --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
  --node-osdisk-type Ephemeral \
  --node-vm-size Standard_D8ds_v4 \
- --kubernetes-version 1.23.5 \
+ --kubernetes-version 1.25.4 \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
  --enable-azure-rbac \
