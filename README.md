@@ -53,3 +53,6 @@ Example performance testing numbers has been put to [notes](notes.md).
   - [Run a Single-Instance Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/)
   - [Run a Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/)
 - [Application-based asynchronous replication](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region#application-based-asynchronous-replication)
+- [Errors when mounting Azure disk volumes](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/fail-to-mount-azure-disk-volume)
+  - [Cause: Changing ownership and permissions for large volume takes much time](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/fail-to-mount-azure-disk-volume#cause-changing-ownership-and-permissions-for-large-volume-takes-much-time)
+- [Example statefulset with Azure Disks](https://gist.github.com/phealy/801ac1f5f5a3fac4b32ff580a72eea20)
