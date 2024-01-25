@@ -19,9 +19,15 @@ spec:
         kubernetes.io/os: linux
       containers:
         # - image: jannemattila/webapp-update:1.0.9
-        - image: jannemattila/webapp-fs-tester:1.1.7
+        - image: jannemattila/webapp-fs-tester:1.1.13
           imagePullPolicy: Always
           name: webapp-fs-tester-demo
+          # https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/fail-to-mount-azure-disk-volume#cause-changing-ownership-and-permissions-for-large-volume-takes-much-time
+          # securityContext:
+          #   runAsUser: 1000
+          #   runAsGroup: 3000
+          #   fsGroup: 2000
+          #   fsGroupChangePolicy: "OnRootMismatch"
           # resources:
           #   requests:
           #     cpu: 100m
@@ -34,12 +40,12 @@ spec:
               name: http
               protocol: TCP
           volumeMounts:
-            - name: empty
-              mountPath: /mnt/empty
-            - name: hostpath
-              mountPath: /mnt/hostpath
-            - name: nfs
-              mountPath: /mnt/nfs
+            # - name: empty
+            #   mountPath: /mnt/empty
+            # - name: hostpath
+            #   mountPath: /mnt/hostpath
+            # - name: nfs
+            #   mountPath: /mnt/nfs
             - name: smb
               mountPath: /mnt/smb
             # - name: blobfuse
@@ -53,14 +59,14 @@ spec:
             # - name: netapp-nfs
             #   mountPath: /mnt/netapp-nfs
       volumes:
-        - name: empty
-          emptyDir: {}
-        - name: hostpath
-          hostPath:
-            path: /mnt
-        - name: nfs
-          persistentVolumeClaim:
-            claimName: nfs-pvc
+        # - name: empty
+        #   emptyDir: {}
+        # - name: hostpath
+        #   hostPath:
+        #     path: /mnt
+        # - name: nfs
+        #   persistentVolumeClaim:
+        #     claimName: nfs-pvc
         - name: smb
           persistentVolumeClaim:
             claimName: smb-pvc

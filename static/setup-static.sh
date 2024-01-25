@@ -18,6 +18,20 @@ storage_id=$(az storage account create \
   --query id -o tsv)
 echo $storage_id
 
+# If you need to create HDD & SMB fileshare:
+# storage_id=$(az storage account create \
+#   --name $premium_storage_name \
+#   --resource-group $resource_group_name \
+#   --location $location \
+#   --sku Standard_LRS \
+#   --kind StorageV2 \
+#   --default-action Deny \
+#   --allow-blob-public-access false \
+#   --public-network-access Disabled \
+#   --https-only false \
+#   --query id -o tsv)
+# echo $storage_id
+
 premium_storage_key=$(az storage account keys list \
   --account-name $premium_storage_name \
   --resource-group $resource_group_name \
@@ -28,6 +42,8 @@ echo $premium_storage_key
 az storage share-rm create --access-tier Premium --enabled-protocols SMB --quota 100 --name $premium_storage_share_name_smb --storage-account $premium_storage_name
 az storage share-rm create --access-tier Premium --enabled-protocols NFS --quota 100 --name $premium_storage_share_name_nfs --storage-account $premium_storage_name
 
+# You can use other pricing tiers as well:
+# az storage share-rm create --access-tier Hot --enabled-protocols SMB --quota 1000 --name $premium_storage_share_name_smb --storage-account $premium_storage_name
 # Provisioned capacity: 100 GiB
 # =>
 # Performance
@@ -40,7 +56,7 @@ az storage share-rm create --access-tier Premium --enabled-protocols NFS --quota
 # Disable private endpoint network policies
 az network vnet subnet update \
   --ids $subnet_storage_id \
-  --disable-private-endpoint-network-policies \
+  --private-endpoint-network-policies Disabled \
   --output none
 
 # Create private endpoint to "StorageSubnet"
@@ -78,7 +94,7 @@ echo $pe_nic_id
 # Get ip of private endpoint NIC
 pe_ip=$(az network nic show \
   --ids $pe_nic_id \
-  --query "ipConfigurations[0].privateIpAddress" -o tsv)
+  --query "ipConfigurations[0].privateIPAddress" -o tsv)
 echo $pe_ip
 
 # Map private endpoint ip to A record in Private DNS Zone
@@ -129,7 +145,7 @@ kubectl describe pvc smb-pvc -n demos
 # | |_| | |  | |\ V /  __/ |      \ V /  / __/
 # |____/|_|  |_| \_/ \___|_|       \_/  |_____|
 # Entering into experimental area
-###################################################################### 
+######################################################################
 
 # Relevant links
 # https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/docs/design-v2.md

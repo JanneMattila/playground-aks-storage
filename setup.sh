@@ -18,7 +18,7 @@ subnet_netapp_name="snet-netapp"
 cluster_identity_name="id-myaksstorage-cluster"
 kubelet_identity_name="id-myaksstorage-kubelet"
 resource_group_name="rg-myaksstorage"
-location="westeurope"
+location="swedencentral"
 
 # Login and set correct context
 az login -o table
@@ -78,18 +78,18 @@ echo $kubelet_identity_object_id
 az aks get-versions -l $location -o table
 
 # Note: for public cluster you need to authorize your ip to use api
-my_ip=$(curl --no-progress-meter https://api.ipify.org)
+my_ip=$(curl --no-progress-meter https://myip.jannemattila.com)
 echo $my_ip
 
 # Enable Ultra Disk:
 # --enable-ultra-ssd
-
+# --zones 1 2 3 -
 aks_json=$(az aks create -g $resource_group_name -n $aks_name \
- --zones 1 2 3 --max-pods 50 --network-plugin azure \
- --node-count 3 --enable-cluster-autoscaler --min-count 3 --max-count 4 \
+ --max-pods 50 --network-plugin azure \
+ --node-count 1 --enable-cluster-autoscaler --min-count 1 --max-count 2 \
  --node-osdisk-type Ephemeral \
  --node-vm-size Standard_D8ds_v4 \
- --kubernetes-version 1.25.5 \
+ --kubernetes-version 1.28.3 \
  --enable-addons monitoring,azure-policy,azure-keyvault-secrets-provider \
  --enable-aad \
  --enable-azure-rbac \
@@ -101,7 +101,6 @@ aks_json=$(az aks create -g $resource_group_name -n $aks_name \
  --assign-identity $cluster_identity_id \
  --assign-kubelet-identity $kubelet_identity_id \
  --api-server-authorized-ip-ranges $my_ip \
- --enable-ultra-ssd \
  -o json)
 
 aks_node_resource_group_name=$(echo $aks_json | jq -r .nodeResourceGroup)
@@ -270,6 +269,12 @@ ls perf-test/*.0
 
 # Remove test files
 rm perf-test/*.0
+
+for i in $(seq 10000 60000)
+do
+    echo $i
+    mkdir $i
+done
 
 # Exit container shell
 exit
