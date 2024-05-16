@@ -556,7 +556,7 @@ spec:
   storageClassName: perf-test-sc
   resources:
     requests:
-      storage: 8192Gi # <- Disk size: 1024Gi or 8192Gi
+      storage: 8192Gi # <- Disk size: P30 -> 1024Gi and P60 -> 8192Gi
 ```
 
 _Test 1:_
