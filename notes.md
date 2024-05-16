@@ -605,7 +605,7 @@ Jobs: 8 (f=8): [r(8)][0.2%][r=122MiB/s][r=31.3k IOPS][eta 05h:32m:37s]
 | ---------- | --------------- | --------------------------------------------------------------------------- |
 | 31'000     | 128 MBps        | **Limiting factor is disk _even_ with max burst with IOPS limit of 30'000** |
 
-Note: This test was done with P60 but there is no difference in burst IOPS between
+Note: This test was done with P60 but there is _no difference_ in max burst performance between
 [P30 and P60](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
 .
 
