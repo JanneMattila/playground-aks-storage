@@ -531,7 +531,7 @@ Disk is deployed using following storage class:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: perf-test
+  name: perf-test-sc
 provisioner: disk.csi.azure.com
 parameters:
   enableBursting: "true" # <- Enable on-demand bursting
@@ -540,6 +540,23 @@ parameters:
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
+```
+
+And with the following PVC:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: perf-test-pvc
+  namespace: demos
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: perf-test-sc
+  resources:
+    requests:
+      storage: 8192Gi # <- Disk size: 1024Gi or 8192Gi
 ```
 
 _Test 1:_
