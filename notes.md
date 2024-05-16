@@ -585,7 +585,7 @@ Jobs: 4 (f=4): [w(4)][55.0%][w=65.9MiB/s][w=16.9k IOPS][eta 00m:09s]
 _Test 2:_
 
 - VM: [Standard_E48ds_v5](https://learn.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series)
-  - Base provisioned: **76'800 IOPS, 1315 MBps**
+  - Base provisioned: **76'800 IOPS, 1'315 MBps**
   - Max burst: **80'000 IOPS, 3'000 MBps**
 - Disk: [P60 - 8192Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
   - Base provisioned: **16'000 IOPS, 500 MBps**
