@@ -9,7 +9,9 @@ parameters:
   # https://docs.microsoft.com/en-us/azure/virtual-machines/disks-redundancy
   # ZRS = Zone-redundant storage
   # https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region
+  # enableBursting: "true"
   skuName: Premium_ZRS
+  # cachingmode: None
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true

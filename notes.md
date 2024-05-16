@@ -511,6 +511,91 @@ Disk stats (read/write):
   sdc: ios=466755/0, merge=221/0, ticks=307498/0, in_queue=20, util=14.50%
 ```
 
+### Example disk perf analysis
+
+Here is example disk performance analysis using `fio` tool.
+
+These are the commands used to run the tests:
+
+```bash
+# Write test
+fio --directory=perf-test --direct=1 --rw=randwrite --bs=4k --ioengine=libaio --iodepth=256 --runtime=200 --numjobs=8 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1
+
+# Read test
+fio --directory=perf-test --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime=20000 --numjobs=8 --time_based --group_reporting --size=4m --name=iops-test-job --eta-newline=1 --readonly
+```
+
+Disk is deployed using following storage class:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: perf-test
+provisioner: disk.csi.azure.com
+parameters:
+  enableBursting: "true" # <- Enable on-demand bursting
+  skuName: Premium_LRS
+  cachingmode: None      # <- Disable caching to see the raw disk performance
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+```
+
+_Test 1:_
+
+- VM: [Standard_D8ds_v4](https://learn.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series)
+  - Max uncached disk throughput: **12'800 IOPS, 192 MBps**
+  - Max burst uncached disk throughput: **16'000 IOPS, 400 MBps**
+- Disk: [P30 - 1024Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
+  - Base provisioned IOPS per disk: **5000 IOPS**
+  - Base provisioned Throughput per disk: **200 MB/s**
+  - Max burst IOPS per disk: **30,000 IOPS**
+  - Max burst throughput per disk: **1,000 MB/s**
+
+Write & Read test results (`cachingmode: None` removes caching impact):
+
+```bash
+Jobs: 4 (f=4): [w(4)][15.0%][w=66.2MiB/s][w=16.9k IOPS][eta 00m:17s]
+Jobs: 4 (f=4): [w(4)][25.0%][w=64.4MiB/s][w=16.5k IOPS][eta 00m:15s] 
+Jobs: 4 (f=4): [w(4)][35.0%][w=65.8MiB/s][w=16.8k IOPS][eta 00m:13s] 
+Jobs: 4 (f=4): [w(4)][45.0%][w=65.0MiB/s][w=16.7k IOPS][eta 00m:11s] 
+Jobs: 4 (f=4): [w(4)][55.0%][w=65.9MiB/s][w=16.9k IOPS][eta 00m:09s]
+```
+
+| Test IOPS  | Test throughput | Analysis                                            |
+| ---------- | --------------- | --------------------------------------------------- |
+| 16'000     | 71 MBps         | **Limiting factor is VM with IOPS limit of 16'000** |
+
+_Test 2:_
+
+- VM: [Standard_E48ds_v5](https://learn.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series)
+  - Max uncached disk throughput: **76'800 IOPS, 1315 MBps**
+  - Max burst uncached disk throughput: **80'000 IOPS, 3'000 MBps**
+- Disk: [P60 - 8192Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
+  - Base provisioned IOPS per disk: **16'000 IOPS**
+  - Base provisioned Throughput per disk: **500 MB/s**
+  - Max burst IOPS per disk: **30,000 IOPS**
+  - Max burst throughput per disk: **1,000 MB/s**
+
+Write & Read test results (`cachingmode: None` removes caching impact):
+
+```bash
+Jobs: 8 (f=8): [r(8)][0.2%][r=123MiB/s][r=31.5k IOPS][eta 05h:32m:45s] 
+Jobs: 8 (f=8): [r(8)][0.2%][r=122MiB/s][r=31.2k IOPS][eta 05h:32m:43s] 
+Jobs: 8 (f=8): [r(8)][0.2%][r=124MiB/s][r=31.6k IOPS][eta 05h:32m:41s]  
+Jobs: 8 (f=8): [r(8)][0.2%][r=123MiB/s][r=31.4k IOPS][eta 05h:32m:39s] 
+Jobs: 8 (f=8): [r(8)][0.2%][r=122MiB/s][r=31.3k IOPS][eta 05h:32m:37s] 
+```
+
+| Test IOPS  | Test throughput | Analysis                                                                |
+| ---------- | --------------- | ----------------------------------------------------------------------- |
+| 31'000     | 128 MBps        | **Limiting factor is disk _even_ with burst with IOPS limit of 30'000** |
+
+Note: This test was done with P60 but there is no difference in burst IOPS between
+[P30 and P60](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
+.
+
 ## emptyDir
 
 [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)
