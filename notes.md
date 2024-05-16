@@ -562,8 +562,8 @@ spec:
 _Test 1:_
 
 - VM: [Standard_D8ds_v4](https://learn.microsoft.com/en-us/azure/virtual-machines/ddv4-ddsv4-series)
-  - Max uncached disk throughput: **12'800 IOPS, 192 MBps**
-  - Max burst uncached disk throughput: **16'000 IOPS, 400 MBps**
+  - Base provisioned: **12'800 IOPS, 192 MBps**
+  - Max burst: **16'000 IOPS, 400 MBps**
 - Disk: [P30 - 1024Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
   - Base provisioned: **5,000 IOPS, 200 MBps**
   - Max burst: **30,000 IOPS, 1,000 MBps**
@@ -585,8 +585,8 @@ Jobs: 4 (f=4): [w(4)][55.0%][w=65.9MiB/s][w=16.9k IOPS][eta 00m:09s]
 _Test 2:_
 
 - VM: [Standard_E48ds_v5](https://learn.microsoft.com/en-us/azure/virtual-machines/edv5-edsv5-series)
-  - Max uncached disk throughput: **76'800 IOPS, 1315 MBps**
-  - Max burst uncached disk throughput: **80'000 IOPS, 3'000 MBps**
+  - Base provisioned: **76'800 IOPS, 1315 MBps**
+  - Max burst: **80'000 IOPS, 3'000 MBps**
 - Disk: [P60 - 8192Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
   - Base provisioned: **16,000 IOPS, 500 MBps**
   - Max burst: **30,000 IOPS, 1,000 MBps**
