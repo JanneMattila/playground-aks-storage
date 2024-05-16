@@ -565,10 +565,8 @@ _Test 1:_
   - Max uncached disk throughput: **12'800 IOPS, 192 MBps**
   - Max burst uncached disk throughput: **16'000 IOPS, 400 MBps**
 - Disk: [P30 - 1024Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
-  - Base provisioned IOPS per disk: **5000 IOPS**
-  - Base provisioned Throughput per disk: **200 MB/s**
-  - Max burst IOPS per disk: **30,000 IOPS**
-  - Max burst throughput per disk: **1,000 MB/s**
+  - Base provisioned: **5,000 IOPS, 200 MBps**
+  - Max burst: **30,000 IOPS, 1,000 MBps**
 
 Write & Read test results (`cachingmode: None` removes caching impact):
 
@@ -580,9 +578,9 @@ Jobs: 4 (f=4): [w(4)][45.0%][w=65.0MiB/s][w=16.7k IOPS][eta 00m:11s]
 Jobs: 4 (f=4): [w(4)][55.0%][w=65.9MiB/s][w=16.9k IOPS][eta 00m:09s]
 ```
 
-| Test IOPS  | Test throughput | Analysis                                            |
-| ---------- | --------------- | --------------------------------------------------- |
-| 16'000     | 71 MBps         | **Limiting factor is VM with IOPS limit of 16'000** |
+| Test IOPS  | Test throughput | Analysis                                                                  |
+| ---------- | --------------- | ------------------------------------------------------------------------- |
+| 16'000     | 71 MBps         | **Limiting factor is VM _even_ with max burst with IOPS limit of 16'000** |
 
 _Test 2:_
 
@@ -590,10 +588,8 @@ _Test 2:_
   - Max uncached disk throughput: **76'800 IOPS, 1315 MBps**
   - Max burst uncached disk throughput: **80'000 IOPS, 3'000 MBps**
 - Disk: [P60 - 8192Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
-  - Base provisioned IOPS per disk: **16'000 IOPS**
-  - Base provisioned Throughput per disk: **500 MB/s**
-  - Max burst IOPS per disk: **30,000 IOPS**
-  - Max burst throughput per disk: **1,000 MB/s**
+  - Base provisioned: **16,000 IOPS, 500 MBps**
+  - Max burst: **30,000 IOPS, 1,000 MBps**
 
 Write & Read test results (`cachingmode: None` removes caching impact):
 
@@ -605,9 +601,9 @@ Jobs: 8 (f=8): [r(8)][0.2%][r=123MiB/s][r=31.4k IOPS][eta 05h:32m:39s]
 Jobs: 8 (f=8): [r(8)][0.2%][r=122MiB/s][r=31.3k IOPS][eta 05h:32m:37s] 
 ```
 
-| Test IOPS  | Test throughput | Analysis                                                                |
-| ---------- | --------------- | ----------------------------------------------------------------------- |
-| 31'000     | 128 MBps        | **Limiting factor is disk _even_ with burst with IOPS limit of 30'000** |
+| Test IOPS  | Test throughput | Analysis                                                                    |
+| ---------- | --------------- | --------------------------------------------------------------------------- |
+| 31'000     | 128 MBps        | **Limiting factor is disk _even_ with max burst with IOPS limit of 30'000** |
 
 Note: This test was done with P60 but there is no difference in burst IOPS between
 [P30 and P60](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
