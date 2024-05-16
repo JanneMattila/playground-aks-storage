@@ -565,8 +565,8 @@ _Test 1:_
   - Base provisioned: **12'800 IOPS, 192 MBps**
   - Max burst: **16'000 IOPS, 400 MBps**
 - Disk: [P30 - 1024Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
-  - Base provisioned: **5,000 IOPS, 200 MBps**
-  - Max burst: **30,000 IOPS, 1,000 MBps**
+  - Base provisioned: **5'000 IOPS, 200 MBps**
+  - Max burst: **30'000 IOPS, 1'000 MBps**
 
 Write & Read test results (`cachingmode: None` removes caching impact):
 
@@ -588,8 +588,8 @@ _Test 2:_
   - Base provisioned: **76'800 IOPS, 1315 MBps**
   - Max burst: **80'000 IOPS, 3'000 MBps**
 - Disk: [P60 - 8192Gi](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
-  - Base provisioned: **16,000 IOPS, 500 MBps**
-  - Max burst: **30,000 IOPS, 1,000 MBps**
+  - Base provisioned: **16'000 IOPS, 500 MBps**
+  - Max burst: **30'000 IOPS, 1'000 MBps**
 
 Write & Read test results (`cachingmode: None` removes caching impact):
 
