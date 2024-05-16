@@ -609,6 +609,23 @@ Note: This test was done with P60 but there is _no difference_ in max burst perf
 [P30 and P60](https://learn.microsoft.com/en-us/azure/virtual-machines/disks-scalability-targets#premium-ssd-managed-disks-per-disk-limits)
 .
 
+With wise words of Copilot:
+
+> IOPS (Input/Output Operations Per Second) and throughput are two different performance measurements for storage devices like disks.
+>
+> IOPS is a performance metric that measures the number of read and write operations a storage device can perform in one second.
+> It’s a common measurement for the performance of storage devices, especially in random read/write operations where the size
+> of the operation is small. High IOPS is beneficial for workloads that require many small,
+> random access operations, such as transactional databases.
+>
+> Throughput, on the other hand, measures the amount of data transferred to and from the storage device per second.
+> It’s usually measured in megabytes per second (MB/s) and is important for workloads that involve large,
+> sequential data transfers, like streaming large video files or performing data backups.
+>
+> In essence, IOPS is about the number of operations, and throughput is about the volume of data transferred.
+> Both are important for understanding the performance characteristics of storage devices,
+> and the optimal balance between them depends on the specific workload requirements.
+
 ## emptyDir
 
 [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)
